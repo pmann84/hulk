@@ -13,8 +13,11 @@ set(CMAKE_SUPPRESS_REGENERATION true)
 # Third party libs
 add_subdirectory(vendor)
 
-# ??? Library
-#add_subdirectory()
+# Hulk Library
+add_subdirectory(hulk)
 
 # Examples
 add_subdirectory(examples)
+
+# Tests
+add_subdirectory(test_hulk)

@@ -1,6 +1,8 @@
-add_subdirectory(spdlog)
 # TODO: Make this condition with a build tests flag
 add_subdirectory(googletest)
+
+# Add header only spdlog directory
+set(SPDLOG_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/spdlog/include PARENT_SCOPE)
 
 # Add asio include directory for parent scope
 set(ASIO_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/asio/asio/include PARENT_SCOPE)
