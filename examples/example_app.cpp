@@ -32,13 +32,24 @@ void routing_func(int id)
 int main()
 {
     hulk::log::init();
-    hulk::log::error("Some error message with arg: {}", 1);
-    hulk::log::warn("Easy padding in numbers like {:08d}", 12);
-    hulk::log::critical("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
-    hulk::log::info("Support for floats {:03.2f}", 1.23456);
-    hulk::log::debug("This message should be displayed..");
+    // hulk::log::error("Some error message with arg: {}", 1);
+    // hulk::log::warn("Easy padding in numbers like {:08d}", 12);
+    // hulk::log::critical("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
+    // hulk::log::info("Support for floats {:03.2f}", 1.23456);
+    // hulk::log::debug("This message should be displayed..");
 
-    asio::io_context ctx;
+    uint32_t port = 8080;
+
+    asio::io_context ctx; // IO Context
+    asio::ip::tcp::endpoint ep(asio::ip::tcp::v4(), port);
+    asio::ip::tcp::acceptor acceptor(ctx, ep); // Acceptor that listens on endpoint
+    hulk::log::info("Running on endpoint {}:{}", ep.address().to_string(), ep.port());
+
+    while(true)
+    {
+        asio::ip::tcp::socket socket(ctx);
+        acceptor.accept(socket);
+    }
 
 
     // hulk::app app;
