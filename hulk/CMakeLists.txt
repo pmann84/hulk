@@ -12,4 +12,10 @@ target_include_directories(${PROJECT_NAME}
         ${SPDLOG_INCLUDE_DIRECTORIES}
 )
 
-target_sources(${PROJECT_NAME} INTERFACE "include/hulk/logging.hpp")
+target_sources(
+    ${PROJECT_NAME} 
+    INTERFACE 
+        "include/hulk/logging.hpp"
+        "include/hulk/app.hpp"
+        "include/hulk/hulk.hpp"
+)
