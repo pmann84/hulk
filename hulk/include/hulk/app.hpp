@@ -1,3 +1,6 @@
+#ifndef HULK_APP_H_
+#define HULK_APP_H_
+
 #include <cstdint>
 #include <thread>
 
@@ -26,3 +29,5 @@ namespace hulk
         app_config m_config;
     };
 }
+
+#endif // HULK_APP_H_

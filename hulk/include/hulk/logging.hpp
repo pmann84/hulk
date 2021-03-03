@@ -1,3 +1,6 @@
+#ifndef HULK_LOGGING_H_
+#define HULK_LOGGING_H_
+
 #include <spdlog/spdlog.h>
 
 namespace hulk
@@ -9,7 +12,6 @@ namespace hulk
             spdlog::set_pattern("%^[%d/%m/%Y %T.%e][%l][thread %t] %v%$");
             spdlog::set_level(spdlog::level::debug); 
         }
-
 
         template<typename FormatString, typename... Args>
         inline void error(const FormatString &fmt, Args&&...args)
@@ -42,3 +44,5 @@ namespace hulk
         }
     }
 } 
+
+#endif // HULK_LOGGING_H_
