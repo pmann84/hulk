@@ -10,12 +10,11 @@ target_include_directories(${PROJECT_NAME}
     INTERFACE 
         ${CMAKE_CURRENT_SOURCE_DIR}/include 
         ${SPDLOG_INCLUDE_DIRECTORIES}
+        ${ASIO_INCLUDE_DIRECTORIES}
 )
 
 target_sources(
     ${PROJECT_NAME} 
     INTERFACE 
-        "include/hulk/logging.hpp"
-        "include/hulk/app.hpp"
         "include/hulk/hulk.hpp"
 )

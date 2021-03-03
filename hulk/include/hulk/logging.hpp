@@ -7,10 +7,15 @@ namespace hulk
 {
     namespace log
     {
-        void init()
+        void init(bool debug = false)
         {
             spdlog::set_pattern("%^[%d/%m/%Y %T.%e][%l][thread %t] %v%$");
-            spdlog::set_level(spdlog::level::debug); 
+            spdlog::set_level(debug ? spdlog::level::debug : spdlog::level::info); 
+        }
+
+        void set_level(spdlog::level::level_enum level)
+        {
+            spdlog::set_level(level);
         }
 
         template<typename FormatString, typename... Args>
