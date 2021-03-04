@@ -5,11 +5,8 @@ namespace hulk
     class server
     {
     public:
-        server(uint32_t port) 
-            : m_port(port)
-            , m_endpoint(asio::ip::tcp::v4(), m_port)
-            , m_acceptor(m_context, m_endpoint)
-        {  
+        server(uint32_t port) : m_acceptor(m_context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
+        { 
         }
 
         ~server()
@@ -20,25 +17,55 @@ namespace hulk
             {
                 m_context_run_thread.join();
             }
-            hulk::log::info("Server Shutdown. Goodbye!");
+            log::info("Server Shutdown. Goodbye!");
         }
 
         void run()
         {
             // First assign some work for the context to do so it doesnt shut down immediately on startup
-            // hulk::log::debug("Priming context to read thread.");
-            // wait_for_message(acceptor, ctx);
-            hulk::log::debug("Starting context in thread.");
+            log::debug("Priming context on read thread to wait for messages.");
+            accept_connections();
+            log::debug("Running context in separate thread.");
             m_context_run_thread = std::thread([this](){ m_context.run(); });
-            hulk::log::info("Server started successfully!");
-            hulk::log::info("Server listening on 127.0.0.1:{}", m_endpoint.port());
-            while(!m_context.stopped()) {} // Run indefinitely until the context runs out of work to do
+            log::info("Server started successfully!");
+            log::info("Server listening on http://127.0.0.1:{}",
+                            m_acceptor.local_endpoint().port());
+            while(!m_context.stopped()) 
+            {
+                update();
+            } // Run indefinitely until the context runs out of work to do
         }
+
+        void update()
+        {
+            // process messages off the queue here
+        }
+
     private:
-        uint32_t m_port;
+        // ASYNC
+        void accept_connections()
+        {
+            m_acceptor.async_accept(
+                [this](std::error_code error_code, asio::ip::tcp::socket socket)
+                {
+                    if (!error_code)
+                    {
+                        // OK!
+                        log::debug("Recieved new message on http://127.0.0.1:{}", socket.remote_endpoint().port());
+                    }
+                    else
+                    {
+                        log::error("Errored while trying to accept new connections. {}", error_code.message());
+                    }
+                    accept_connections();
+                }
+            );
+        }
+
+    private:
         asio::io_context m_context; // IO Context
-        asio::ip::tcp::endpoint m_endpoint; // ep(asio::ip::tcp::v4(), port);
         asio::ip::tcp::acceptor m_acceptor; //(ctx, ep); // Acceptor that listens on endpoint (abstracts the socket)
         std::thread m_context_run_thread;
+        // message processing queue
     };
 }

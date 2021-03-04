@@ -5,13 +5,14 @@
 
 #include <cstdint>
 #include <thread>
+#include <memory>
 
 namespace hulk
 {
     class app final
     {
     public:
-        app() : m_server(8080), m_debug(false)
+        app() : m_debug(false), m_port(8080)
         {
             log::init(m_debug);
         }
@@ -23,14 +24,22 @@ namespace hulk
             return *this;
         }
 
+        app& port(uint32_t port)
+        {
+            m_port = port;
+            return *this;
+        }
+
         void run()
         {
-            m_server.run();
+            m_server = std::make_unique<server>(m_port);
+            m_server->run();
         }
         
     private:
-        server m_server;
         bool m_debug;
+        uint32_t m_port;
+        std::unique_ptr<server> m_server;
     };
 
 

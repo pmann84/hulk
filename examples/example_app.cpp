@@ -140,16 +140,10 @@ int main()
     // First assign some work for the context to do so it doesnt shut down immediately on startup
     // wait_for_message(acceptor, ctx);
 
-    // // Startup  - first start the context
-    // std::thread thread_ctx;
-    // thread_ctx = std::thread([&ctx](){ ctx.run(); });
-    // hulk::log::info("Server started successfully!");
-    // hulk::log::info("Server listening on {}:{}", ep.address().to_string(), ep.port());
-
-
     // Flesh out the API
     hulk::app app;
-    app.debug();
+    app.debug().port(5000);
+
     // app.port(8080)
     //    .multithreaded();
 
