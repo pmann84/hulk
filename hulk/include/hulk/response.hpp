@@ -1,7 +1,7 @@
-#ifndef HULK_HTTP_RESPONSE_H_
-#define HULK_HTTP_RESPONSE_H_
+#ifndef HULK_RESPONSE_H_
+#define HULK_RESPONSE_H_
 
-#include "http_constants.hpp"
+#include "constants.hpp"
 
 #include <sstream>
 
@@ -27,4 +27,4 @@ namespace hulk
     }
 }
 
-#endif // HULK_HTTP_RESPONSE_H_
+#endif // HULK_RESPONSE_H_

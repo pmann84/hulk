@@ -18,6 +18,7 @@ cmake --build . --config Debug
 
 ## Future Development
 Below is a list of issues that need addressing - these will eventually move to github issues tracking
+- Implement multithreading - have a pool of contexts that can process requests in parallel - can only process requests from different servers in parallel
 - Middleware Response caching
 - Support for query parameters e.g. localhost:8080/hello?p1=5&p2=world etc etc
 - Investigate usage of classes for routes

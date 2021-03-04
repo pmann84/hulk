@@ -1,4 +1,6 @@
-#include <asio.hpp>
+#include "connection.hpp"
+
+// #include <asio.hpp>
 
 namespace hulk
 {
@@ -28,8 +30,7 @@ namespace hulk
             log::debug("Running context in separate thread.");
             m_context_run_thread = std::thread([this](){ m_context.run(); });
             log::info("Server started successfully!");
-            log::info("Server listening on http://127.0.0.1:{}",
-                            m_acceptor.local_endpoint().port());
+            log::info("Server listening on http://127.0.0.1:{}", m_acceptor.local_endpoint().port());
             while(!m_context.stopped()) 
             {
                 update();
@@ -42,6 +43,8 @@ namespace hulk
         }
 
     private:
+
+
         // ASYNC
         void accept_connections()
         {
@@ -52,6 +55,15 @@ namespace hulk
                     {
                         // OK!
                         log::debug("Recieved new message on http://127.0.0.1:{}", socket.remote_endpoint().port());
+                        // Create a connection object to deal with reading the message - decide how 
+                        // long these will live, we could store these until the message and route has 
+                        // been completely processed, then use it write the response out or just create 
+                        // a new connection every time - depends on how we will do the writing
+                        auto conn = std::make_shared<connection>(std::move(socket));
+                        m_connections.push_back(conn);
+                        conn->execute();
+                        // Add it to the queue to be picked up to do the processing
+                        log::debug("Connection attempting to read of socket...");
                     }
                     else
                     {
@@ -64,8 +76,11 @@ namespace hulk
 
     private:
         asio::io_context m_context; // IO Context
-        asio::ip::tcp::acceptor m_acceptor; //(ctx, ep); // Acceptor that listens on endpoint (abstracts the socket)
+        asio::ip::tcp::acceptor m_acceptor; // Acceptor that listens on endpoint (abstracts the socket)
         std::thread m_context_run_thread;
+        std::vector<std::shared_ptr<connection>> m_connections;
+        std::vector<std::string> m_messages;
+        std::streambuf m_message_buffer; // Messages are read asynchronously so we store the message here until its ready
         // message processing queue
     };
 }

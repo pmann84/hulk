@@ -1,7 +1,7 @@
-#ifndef HULK_HTTP_REQUEST_H_
-#define HULK_HTTP_REQUEST_H_
+#ifndef HULK_REQUEST_H_
+#define HULK_REQUEST_H_
 
-#include "http_constants.hpp"
+#include "constants.hpp"
 
 namespace hulk
 {
@@ -34,4 +34,4 @@ namespace hulk
     }
 }
 
-#endif // HULK_HTTP_REQUEST_H_
+#endif // HULK_REQUEST_H_
