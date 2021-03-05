@@ -1,4 +1,5 @@
 #include "connection.hpp"
+#include "response.hpp"
 
 // #include <asio.hpp>
 
@@ -7,7 +8,8 @@ namespace hulk
     class server
     {
     public:
-        server(uint32_t port) : m_acceptor(m_context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
+        server(uint32_t port) 
+            : m_acceptor(m_context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
         { 
         }
 
@@ -31,6 +33,11 @@ namespace hulk
             m_context_run_thread = std::thread([this](){ m_context.run(); });
             log::info("Server started successfully!");
             log::info("Server listening on http://127.0.0.1:{}", m_acceptor.local_endpoint().port());
+
+            http::response response;
+            response.status = 404;
+            log::debug(response.to_string());
+            
             while(!m_context.stopped()) 
             {
                 update();
@@ -59,9 +66,7 @@ namespace hulk
                         // long these will live, we could store these until the message and route has 
                         // been completely processed, then use it write the response out or just create 
                         // a new connection every time - depends on how we will do the writing
-                        auto conn = std::make_shared<connection>(std::move(socket));
-                        m_connections.push_back(conn);
-                        conn->execute();
+                        std::make_shared<connection>(std::move(socket))->start();
                         // Add it to the queue to be picked up to do the processing
                         log::debug("Connection attempting to read of socket...");
                     }
@@ -80,7 +85,7 @@ namespace hulk
         std::thread m_context_run_thread;
         std::vector<std::shared_ptr<connection>> m_connections;
         std::vector<std::string> m_messages;
-        std::streambuf m_message_buffer; // Messages are read asynchronously so we store the message here until its ready
+        // std::streambuf m_message_buffer; // Messages are read asynchronously so we store the message here until its ready
         // message processing queue
     };
 }

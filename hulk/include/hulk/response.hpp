@@ -7,21 +7,21 @@
 
 namespace hulk
 {
+    using header_t = std::map<std::string, std::string>;
+
     namespace http
     {
         struct response
         {
-            std::string data = "HTTP/1.1 200 OK";
-            // HttpVersion version;
-            // HttpStatusCode status;
-            // std::string message;
+            HttpVersion version = HttpVersion::Http11;
+            uint32_t status = 200;
+            header_t headers;
 
             std::string to_string()
             {
-                return data;
-                // std::stringstream ss;
-                // ss << "HTTP/1.1 200 OK" << std::endl;
-                // return ss.str();
+                std::stringstream ss;
+                ss << version << " " << status << " " << StatusCodeMap[status] << "\r\n";
+                return ss.str();
             }
         };
     }

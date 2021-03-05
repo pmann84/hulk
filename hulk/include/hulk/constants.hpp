@@ -1,6 +1,10 @@
 #ifndef HULK_HTTP_CONSTANTS_H_
 #define HULK_HTTP_CONSTANTS_H_
 
+#include <map>
+#include <string>
+#include <ostream>
+
 namespace hulk
 {
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages
@@ -17,14 +21,58 @@ namespace hulk
         Patch   = 1 << 8, //  PATCH method is used to apply partial modifications to a resource.
     };
 
-    // HttpMethod parse(std::string method_str)
-    // {
-    //     switch (method_str)
-    //     {
-    //         case "GET":
-    //             return HttpMethod::GET;
-    //     }
-    // }
+    std::ostream& operator<<(std::ostream& os, HttpMethod method)
+    {
+        switch (method)
+        {
+            case HttpMethod::Get:
+            {
+                os << "GET";
+                break;
+            }
+            case HttpMethod::Head:
+            {
+                os << "HEAD";
+                break;
+            }
+            case HttpMethod::Post:
+            {
+                os << "POST";
+                break;
+            }
+            case HttpMethod::Put:
+            {
+                os << "PUT";
+                break;
+            }
+            case HttpMethod::Delete:
+            {
+                os << "DELETE";
+                break;
+            }
+            case HttpMethod::Connect:
+            {
+                os << "CONNECT";
+                break;
+            }
+            case HttpMethod::Options:
+            {
+                os << "OPTIONS";
+                break;
+            }
+            case HttpMethod::Trace:
+            {
+                os << "TRACE";
+                break;
+            }
+            case HttpMethod::Patch:
+            {
+                os << "PATCH";
+                break;
+            }
+            return os;
+        }
+    }
 
     enum class HttpVersion
     {
@@ -34,8 +82,89 @@ namespace hulk
         Http20,
     };
 
-    enum class HttpStatusCode
+    std::ostream& operator<<(std::ostream& os, HttpVersion version)
     {
+        switch (version)
+        {
+            case HttpVersion::Http09:
+            {
+                os << "HTTP/0.9";
+                break;
+            }
+            case HttpVersion::Http10:
+            {
+                os << "HTTP/1.0";
+                break;
+            }
+            case HttpVersion::Http11:
+            {
+                os << "HTTP/1.1";
+                break;
+            }
+            case HttpVersion::Http20:
+            {
+                os << "HTTP/2.0";
+                break;
+            }
+            return os;
+        }
+    }
+
+    static std::map<uint32_t, std::string> StatusCodeMap = {
+        {100, "Continue"},
+        {101, "Switching Protocols"},
+        {103, "Early Hints"},
+        {200, "OK"},
+        {201, "Created"},
+        {202, "Accepted"},
+        {203, "Non-Authoritative Information"},
+        {204, "No Content"},
+        {205, "Reset Content"},
+        {206, "Partial Content"},
+        {300, "Multiple Choices"},
+        {301, "Moved Permanently"},
+        {302, "Found"},
+        {303, "See Other"},
+        {304, "Not Modified"},
+        {307, "Temporary Redirect"},
+        {308, "Permanent Redirect"},
+        {400, "Bad Request"},
+        {401, "Unauthorized"},
+        {402, "Payment Required"},
+        {403, "Forbidden"},
+        {404, "Not Found"},
+        {405, "Method Not Allowed"},
+        {406, "Not Acceptable"},
+        {407, "Proxy Authentication Required"},
+        {408, "Request Timeout"},
+        {409, "Conflict"},
+        {410, "Gone"},
+        {411, "Length Required"},
+        {412, "Precondition Failed"},
+        {413, "Payload Too Large"},
+        {414, "URI Too Long"},
+        {415, "Unsupported Media Type"},
+        {416, "Range Not Satisfiable"},
+        {417, "Expectation Failed"},
+        {418, "I'm a teapot"},
+        {422, "Unprocessable Entity"},
+        {425, "Too Early"},
+        {426, "Upgrade Required"},
+        {428, "Precondition Required"},
+        {429, "Too Many Requests"},
+        {431, "Request Header Fields Too Large"},
+        {451, "Unavailable For Legal Reasons"},
+        {500, "Internal Server Error"},
+        {501, "Not Implemented"},
+        {502, "Bad Gateway"},
+        {503, "Service Unavailable"},
+        {504, "Gateway Timeout"},
+        {505, "HTTP Version Not Supported"},
+        {506, "Variant Also Negotiates"},
+        {507, "Insufficient Storage"},
+        {508, "Loop Detected"},
+        {510, "Not Extended"},
+        {511, "Network Authentication Required"},
     };
 }
 

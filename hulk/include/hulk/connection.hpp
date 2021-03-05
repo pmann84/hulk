@@ -15,7 +15,7 @@ namespace hulk
            log::debug("Creating new connection to handle incoming message.");
         }
 
-        void execute()
+        void start()
         {
             read();
         }
