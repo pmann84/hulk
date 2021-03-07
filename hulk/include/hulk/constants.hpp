@@ -7,6 +7,8 @@
 
 namespace hulk
 {
+    using header_t = std::map<std::string, std::string>;
+
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages
     enum class HttpMethod
     {
@@ -21,57 +23,26 @@ namespace hulk
         Patch   = 1 << 8, //  PATCH method is used to apply partial modifications to a resource.
     };
 
-    std::ostream& operator<<(std::ostream& os, HttpMethod method)
+    hulk::HttpMethod method_from_string(std::string method)
     {
-        switch (method)
-        {
-            case HttpMethod::Get:
-            {
-                os << "GET";
-                break;
-            }
-            case HttpMethod::Head:
-            {
-                os << "HEAD";
-                break;
-            }
-            case HttpMethod::Post:
-            {
-                os << "POST";
-                break;
-            }
-            case HttpMethod::Put:
-            {
-                os << "PUT";
-                break;
-            }
-            case HttpMethod::Delete:
-            {
-                os << "DELETE";
-                break;
-            }
-            case HttpMethod::Connect:
-            {
-                os << "CONNECT";
-                break;
-            }
-            case HttpMethod::Options:
-            {
-                os << "OPTIONS";
-                break;
-            }
-            case HttpMethod::Trace:
-            {
-                os << "TRACE";
-                break;
-            }
-            case HttpMethod::Patch:
-            {
-                os << "PATCH";
-                break;
-            }
-            return os;
-        }
+        if (method == "GET")
+            return hulk::HttpMethod::Get;
+        else if (method == "HEAD")
+            return hulk::HttpMethod::Head;
+        else if (method == "POST")
+            return hulk::HttpMethod::Post;
+        else if (method == "PUT")
+            return hulk::HttpMethod::Put;
+        else if (method == "DELETE")
+            return hulk::HttpMethod::Delete;
+        else if (method == "CONNECT")
+            return hulk::HttpMethod::Connect;
+        else if (method == "OPTIONS")
+            return hulk::HttpMethod::Options;
+        else if (method == "TRACE")
+            return hulk::HttpMethod::Trace;
+        else if (method == "PATCH")
+            return hulk::HttpMethod::Patch;
     }
 
     enum class HttpVersion
@@ -82,32 +53,16 @@ namespace hulk
         Http20,
     };
 
-    std::ostream& operator<<(std::ostream& os, HttpVersion version)
+    HttpVersion version_from_string(std::string version)
     {
-        switch (version)
-        {
-            case HttpVersion::Http09:
-            {
-                os << "HTTP/0.9";
-                break;
-            }
-            case HttpVersion::Http10:
-            {
-                os << "HTTP/1.0";
-                break;
-            }
-            case HttpVersion::Http11:
-            {
-                os << "HTTP/1.1";
-                break;
-            }
-            case HttpVersion::Http20:
-            {
-                os << "HTTP/2.0";
-                break;
-            }
-            return os;
-        }
+        if (version == "HTTP/0.9")
+            return HttpVersion::Http09;
+        else if (version == "HTTP/1.0")
+            return HttpVersion::Http10;
+        else if (version == "HTTP/1.1")
+            return HttpVersion::Http11;
+        else if (version == "HTTP/2.0")
+            return HttpVersion::Http20;
     }
 
     static std::map<uint32_t, std::string> StatusCodeMap = {
@@ -166,6 +121,87 @@ namespace hulk
         {510, "Not Extended"},
         {511, "Network Authentication Required"},
     };
+}
+
+std::ostream& operator<<(std::ostream& os, hulk::HttpMethod method)
+{
+    switch (method)
+    {
+        case hulk::HttpMethod::Get:
+        {
+            os << "GET";
+            break;
+        }
+        case hulk::HttpMethod::Head:
+        {
+            os << "HEAD";
+            break;
+        }
+        case hulk::HttpMethod::Post:
+        {
+            os << "POST";
+            break;
+        }
+        case hulk::HttpMethod::Put:
+        {
+            os << "PUT";
+            break;
+        }
+        case hulk::HttpMethod::Delete:
+        {
+            os << "DELETE";
+            break;
+        }
+        case hulk::HttpMethod::Connect:
+        {
+            os << "CONNECT";
+            break;
+        }
+        case hulk::HttpMethod::Options:
+        {
+            os << "OPTIONS";
+            break;
+        }
+        case hulk::HttpMethod::Trace:
+        {
+            os << "TRACE";
+            break;
+        }
+        case hulk::HttpMethod::Patch:
+        {
+            os << "PATCH";
+            break;
+        }
+        return os;
+    }
+}
+
+std::ostream& operator<<(std::ostream& os, hulk::HttpVersion version)
+{
+    switch (version)
+    {
+        case hulk::HttpVersion::Http09:
+        {
+            os << "HTTP/0.9";
+            break;
+        }
+        case hulk::HttpVersion::Http10:
+        {
+            os << "HTTP/1.0";
+            break;
+        }
+        case hulk::HttpVersion::Http11:
+        {
+            os << "HTTP/1.1";
+            break;
+        }
+        case hulk::HttpVersion::Http20:
+        {
+            os << "HTTP/2.0";
+            break;
+        }
+        return os;
+    }
 }
 
 #endif // HULK_HTTP_CONSTANTS_H_
