@@ -41,7 +41,9 @@ namespace hulk
 
             void populate_headers_from_stream(std::stringstream& stream)
             {
-
+                std::string key_str, val_str;
+                stream >> key_str >> val_str;
+                headers.add(key_str, val_str);
             }
 
             std::string to_string()

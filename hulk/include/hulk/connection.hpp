@@ -52,16 +52,16 @@ namespace hulk
         void read_header()
         {
             log::debug("Reading message header...");
-            asio::async_read_until(m_socket, m_message_buffer, '\r\n',
+            asio::async_read_until(m_socket, m_message_buffer, '\n\r',
                 [this](std::error_code ec, std::size_t bytes_transferred)
                 {
                     size_t buffer_size = asio::buffer_size(m_message_buffer.data());
                     log::debug("Read {} header bytes. Current buffer size = {}", bytes_transferred, buffer_size);
                     std::stringstream ss;
                     copy_bytes_from_buffer(ss, m_message_buffer, bytes_transferred);
+                    // TODO: Sort out the last empty bytes that are read into the headers
                     m_request.populate_headers_from_stream(ss);
-
-                    if (ss.str().size() == 0) 
+                    if (buffer_size - bytes_transferred == 0) // Tests whether there is anything more to read after this
                     {
                         // Finished reading header so now we decide what we need to do
                         // Check the content-length, if its zero then ther is no body and we are done reading
