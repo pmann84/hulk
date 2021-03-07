@@ -23,6 +23,11 @@ namespace hulk
             m_headers[key] = value;
         }
 
+        const std::map<std::string, std::string>& headers() const
+        {
+            return m_headers;
+        }
+
     private:
         std::map<std::string, std::string> m_headers;
     };

@@ -32,6 +32,13 @@ namespace hulk
             uint32_t status = 200;
             header_t headers;
 
+            response()
+            {
+                add_date_header();
+                add_header("Connection", "close");
+                add_header("Content-Length", "0");
+            }
+
             void add_header(std::string key, std::string value)
             {
                 headers[key] = value;
@@ -59,6 +66,8 @@ namespace hulk
                 {
                     ss << key << ": " << value << "\r\n";
                 }
+                ss << "\r\n";
+                // Output body
                 return ss.str();
             }
         };

@@ -2,7 +2,8 @@
 #define HULK_CONNECTION_H_
 
 #include "logging.hpp"
-#include "message_queue.hpp"
+#include "request.hpp"
+#include "response.hpp"
 #include "constants.hpp"
 
 #include <asio.hpp>
@@ -24,7 +25,30 @@ namespace hulk
             read_request_status();
         }
 
+        const http::request& request() const
+        {
+            return m_request;
+        }
+
     private:
+        void send(http::response response, asio::ip::tcp::socket& socket)
+        {
+            std::shared_ptr<std::string> response_str = std::make_shared<std::string>(response.to_string());
+            asio::async_write(socket, asio::buffer(response_str->c_str(), response_str->length()), 
+                [this, response_str](const std::error_code& ec, std::size_t bytes_sent)
+                {
+                    if (!ec)
+                    {
+                        log::info("Sending response ({} bytes):\n{}", bytes_sent, *response_str);
+                    }
+                    else
+                    {
+                        log::error("Error sending response!");
+                    }
+                }
+            );
+        }
+
         void copy_bytes_from_buffer(std::stringstream& ss, asio::streambuf& buffer, size_t num_bytes)
         {
             auto const_buffer = buffer.data();
@@ -39,7 +63,7 @@ namespace hulk
         void read_body()
         {
             log::debug("Reading message body...");
-            asio::async_read_until(m_socket, m_message_buffer, '\r\n',
+            asio::async_read_until(m_socket, m_message_buffer, '\n\r',
                 [this](std::error_code ec, std::size_t bytes_transferred)
                 {
                     size_t buffer_size = asio::buffer_size(m_message_buffer.data());
@@ -59,7 +83,6 @@ namespace hulk
                     log::debug("Read {} header bytes. Current buffer size = {}", bytes_transferred, buffer_size);
                     std::stringstream ss;
                     copy_bytes_from_buffer(ss, m_message_buffer, bytes_transferred);
-                    // TODO: Sort out the last empty bytes that are read into the headers
                     m_request.populate_headers_from_stream(ss);
                     if (buffer_size - bytes_transferred == 0) // Tests whether there is anything more to read after this
                     {
@@ -70,7 +93,11 @@ namespace hulk
                         if ((success && header_value == "0") || !success)
                         {
                             // ROUTING
+                            log::info("Recieved message: \n{}", m_request.to_string());
                             log::info("Executing route {} handler {}", m_request.target, "HANDLER HERE");
+                            // For now just return a canned response
+                            http::response response;
+                            send(response, m_socket);
                         }
                         else
                         {
@@ -82,32 +109,6 @@ namespace hulk
                     {
                         read_header(); // Continue to read the header
                     }
-
-                    //  std::string line, ignore;
-                    //  std::istream stream {&pThis->buff};
-                    //  std::getline(stream, line, '\r');
-                    //  std::getline(stream, ignore, '\n');
-                    //  pThis->headers.on_read_header(line);
-                    
-                    //  if(line.length() == 0)
-                    //  {
-                    //     if(pThis->headers.content_length() == 0)
-                    //     {
-                    //        std::shared_ptr<std::string> str = std::make_shared<std::string>(pThis->headers.get_response());
-                    //        asio::async_write(pThis->socket, boost::asio::buffer(str->c_str(), str->length()), [pThis, str](const error_code& e, std::size_t s)
-                    //        {
-                    //           std::cout << "done" << std::endl;
-                    //        });
-                    //     }
-                    //     else
-                    //     {
-                    //        pThis->read_body(pThis);
-                    //     }
-                    //  }
-                    //  else
-                    //  {
-                    //     pThis->read_next_line(pThis);
-                    //  }
                 }
             );
         }
@@ -127,14 +128,6 @@ namespace hulk
                         copy_bytes_from_buffer(ss, m_message_buffer, bytes_transferred);
                         // Read from the message buffer into the request
                         m_request.populate_status_from_stream(ss);
-                        // std::string method_str;
-                        // ss >> method_str;
-                        // m_request.method = method_from_string(method_str); // HttpMethod
-                        // ss >> m_request.target; // String
-                        // std::string version_str;
-                        // ss >> version_str;
-                        // m_request.version = version_from_string(version_str); // HttpVersion
-                        log::debug("Request Recieved:\r\n\r\n{}\r\n", m_request.to_string());
                         // Re-prime the context to read the next part of the message
                         read_header();
                     }
@@ -144,50 +137,7 @@ namespace hulk
                     }
                 }
             );
-
-
-
-    //               asio::async_read_until(pThis->socket, pThis->buff, '\r', [pThis](const error_code& e, std::size_t s)
-    //   {
-    //      std::string line, ignore;
-    //      std::istream stream {&pThis->buff};
-    //      std::getline(stream, line, '\r');
-    //      std::getline(stream, ignore, '\n');
-    //      pThis->headers.on_read_request_line(line);
-    //      pThis->read_next_line(pThis);
-    //   });
         }
-
-        // ASYNC
-        // void read()
-        // {
-        //     // log::debug("ENTERED READ.");
-        //     asio::async_read(m_socket, m_message_buffer,
-        //         [this](std::error_code e, std::size_t length)
-        //         {
-        //             if (!e)
-        //             {
-        //                 size_t buffer_size = asio::buffer_size(m_message_buffer.data());
-        //                 log::debug("Read {} bytes. Current buffer size = {}", length, buffer_size);
-        //                 std::stringstream ss;
-        //                 auto const_buffer = m_message_buffer.data();
-        //                 std::copy(
-        //                     asio::buffers_begin(const_buffer),
-        //                     asio::buffers_begin(const_buffer) + buffer_size,
-        //                     std::ostream_iterator<char>(ss)
-        //                 );
-        //                 hulk::log::info("Message recieved: {}", ss.str());
-        //                 m_message_buffer.consume(buffer_size);
-        //             }
-        //             else
-        //             {
-        //                 log::error("Error reading message: {}", e.message());
-        //                 m_socket.close();
-        //             }
-        //             read();
-        //         }
-        //     );
-        // }
 
     private:
         asio::ip::tcp::socket m_socket;

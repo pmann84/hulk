@@ -3,18 +3,19 @@
 
 #include "constants.hpp"
 #include "http_headers.hpp"
+#include "helpers.hpp"
 
 #include <sstream>
+#include <string>
+#include <vector>
+#include <locale>
+#include <codecvt>
+#include <functional>
 
 namespace hulk
 {
     namespace http
     {
-        struct header
-        {
-
-        };
-
         struct body
         {
 
@@ -43,13 +44,23 @@ namespace hulk
             {
                 std::string key_str, val_str;
                 stream >> key_str >> val_str;
+                if (key_str.empty() || val_str.empty())
+                {
+                    return;
+                }
+                // std::isspace(static_cast<unsigned char>(key_str[0]));
+                key_str = strings::trim_right(key_str, ':');
                 headers.add(key_str, val_str);
             }
 
-            std::string to_string()
+            std::string to_string() const
             {
                 std::stringstream req;
                 req << method << " " << target << " " << version << "\r\n";
+                for (auto &[key, value] : headers.headers())
+                {
+                    req << key << ": " << value << "\r\n";
+                }
                 return req.str();
             }
         };
