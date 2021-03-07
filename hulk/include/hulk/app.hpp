@@ -2,6 +2,7 @@
 #define HULK_APP_H_
 
 #include "logging.hpp"
+#include "server.hpp"
 
 #include <cstdint>
 #include <thread>
