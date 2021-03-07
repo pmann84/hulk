@@ -49,12 +49,14 @@ namespace hulk
         void update()
         {
             // process messages off the queue here
+            if (!m_active_connection_updated)
+            {
+                m_active_connection_updated = true;
+                log::debug("Active Connections: {}", m_active_connections.size());
+            }
         }
 
     private:
-
-
-        // ASYNC
         void accept_connections()
         {
             m_acceptor.async_accept(
@@ -65,7 +67,8 @@ namespace hulk
                         // OK!
                         log::debug("Recieved new connection on http://127.0.0.1:{}", socket.remote_endpoint().port());
                         auto conn = std::make_shared<connection>(std::move(socket));
-                        m_active_connections.push_back(conn);
+                        m_active_connections.push_back(conn); //TODO Sort this out as the connections never get disposed
+                        m_active_connection_updated = false;
                         // Create a connection object to deal with reading the message - decide how 
                         // long these will live, we could store these until the message and route has 
                         // been completely processed, then use it write the response out or just create 
@@ -86,6 +89,7 @@ namespace hulk
         asio::ip::tcp::acceptor m_acceptor; // Acceptor that listens on endpoint (abstracts the socket)
         std::thread m_context_run_thread;
         std::vector<std::shared_ptr<connection>> m_active_connections;
+        bool m_active_connection_updated = false;
         // message_queue m_message_queue;
         // std::vector<std::shared_ptr<connection>> m_connections;
         // std::vector<std::string> m_messages;
