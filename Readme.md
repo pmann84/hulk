@@ -15,6 +15,14 @@ cd out
 cmake ..
 cmake --build . --config Debug
 ```
+## Current Development
+- Reading body data from request
+- Writing json body data in response
+- Writing html body data in reponse
+- Basic routing of urls (with no parameters or bodies)
+- Support for passing query parameters to routes
+- Support for passing body data to routes
+- Support for query parameters in request 
 
 ## Future Development
 Below is a list of issues that need addressing - these will eventually move to github issues tracking
