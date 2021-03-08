@@ -97,6 +97,7 @@ namespace hulk
                             log::info("Executing route {} handler {}", m_request.target, "HANDLER HERE");
                             // For now just return a canned response
                             http::response response;
+                            response.body.add_body_data("<html><h1>Hello, World!</h1></html>", "text/html");
                             send(response, m_socket);
                         }
                         else

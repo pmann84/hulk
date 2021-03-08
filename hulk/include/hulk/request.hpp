@@ -3,6 +3,7 @@
 
 #include "constants.hpp"
 #include "http_headers.hpp"
+#include "http_body.hpp"
 #include "helpers.hpp"
 
 #include <sstream>
@@ -27,7 +28,7 @@ namespace hulk
             std::string target; // Target of the request i.e. route requested etc, 
             HttpVersion version;
             http_headers headers;
-            body body;
+            http_body body;
 
             void populate_status_from_stream(std::stringstream& stream)
             {

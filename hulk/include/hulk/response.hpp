@@ -2,46 +2,32 @@
 #define HULK_RESPONSE_H_
 
 #include "constants.hpp"
-
+#include "http_headers.hpp"
+#include "http_body.hpp"
 #include <sstream>
 #include <ctime>
 #include <iomanip>
 
 namespace hulk
 {
-    // Access-Control-Allow-Origin: *
-    // Connection: Keep-Alive
-    // Content-Encoding: gzip
-    // Content-Type: text/html; charset=utf-8
-    // Etag: "c561c68d0ba92bbeb8b0f612a9199f722e3a621a"
-    // Keep-Alive: timeout=5, max=997
-    // Last-Modified: Mon, 18 Jul 2016 02:36:04 GMT
-    // Set-Cookie: mykey=myvalue; expires=Mon, 17-Jul-2017 16:06:00 GMT; Max-Age=31449600; Path=/; secure
-    // Transfer-Encoding: chunked
-    // Vary: Cookie, Accept-Encoding
-    // X-Backend-Server: developer2.webapp.scl3.mozilla.com
-    // X-Cache-Info: not cacheable; meta data too large
-    // X-kuma-revision: 1085259
-    // x-frame-options: DENY
-
     namespace http
     {
         struct response
         {
             HttpVersion version = HttpVersion::Http11;
             uint32_t status = 200;
-            header_t headers;
-
+            http_headers headers;
+            http_body body;
+            
             response()
             {
                 add_date_header();
                 add_header("Connection", "close");
-                add_header("Content-Length", "0");
             }
 
             void add_header(std::string key, std::string value)
             {
-                headers[key] = value;
+                headers.add(key, value);
             }
 
             void add_date_header()
@@ -60,14 +46,25 @@ namespace hulk
 
             std::string to_string()
             {
+                if(body.empty())
+                {
+                    add_header("Content-Length", "0");
+                }
+                
                 std::stringstream ss;
                 ss << version << " " << status << " " << StatusCodeMap[status] << "\r\n";
-                for (auto &[key, value] : headers)
+                for (auto &[key, value] : headers.headers())
                 {
                     ss << key << ": " << value << "\r\n";
                 }
-                ss << "\r\n";
                 // Output body
+                if (!body.empty())
+                {
+                    ss << body.content_length();
+                    ss << body.content_type();
+                    ss << "\r\n";
+                    ss << body.data();
+                }
                 return ss.str();
             }
         };

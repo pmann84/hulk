@@ -1,3 +1,6 @@
+#ifndef HULK_HTTP_HEADERS_H_
+#define HULK_HTTP_HEADERS_H_
+
 #include <map>
 #include <string>
 
@@ -32,3 +35,5 @@ namespace hulk
         std::map<std::string, std::string> m_headers;
     };
 }
+
+#endif // HULK_HTTP_HEADERS_H_
