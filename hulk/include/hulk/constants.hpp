@@ -2,7 +2,7 @@
 #define HULK_HTTP_CONSTANTS_H_
 
 #include <map>
-#include <string>
+#include <sstream>
 #include <ostream>
 
 namespace hulk
@@ -41,6 +41,10 @@ namespace hulk
             return hulk::HttpMethod::Trace;
         else if (method == "PATCH")
             return hulk::HttpMethod::Patch;
+        std::stringstream ss;
+        ss << "Cannot parse HTTP Method: " << method; 
+        log::error(ss.str());
+        throw std::runtime_error(ss.str());
     }
 
     enum class HttpVersion
@@ -61,6 +65,10 @@ namespace hulk
             return HttpVersion::Http11;
         else if (version == "HTTP/2.0")
             return HttpVersion::Http20;
+        std::stringstream ss;
+        ss << "Cannot parse HTTP version: " << version; 
+        log::error(ss.str());
+        throw std::runtime_error(ss.str());
     }
 
     static std::map<uint32_t, std::string> StatusCodeMap = {
@@ -225,8 +233,15 @@ std::ostream& operator<<(std::ostream& os, hulk::HttpMethod method)
             os << "PATCH";
             break;
         }
-        return os;
+        default:
+        {
+            std::stringstream ss;
+            ss << "Cannot deserialise HTTP method: " << method; 
+            hulk::log::error(ss.str());
+            throw std::runtime_error(ss.str());
+        }
     }
+    return os;
 }
 
 std::ostream& operator<<(std::ostream& os, hulk::HttpVersion version)
@@ -253,8 +268,15 @@ std::ostream& operator<<(std::ostream& os, hulk::HttpVersion version)
             os << "HTTP/2.0";
             break;
         }
-        return os;
+        default:
+        {
+            std::stringstream ss;
+            ss << "Cannot deserialise HTTP version: " << version; 
+            hulk::log::error(ss.str());
+            throw std::runtime_error(ss.str());
+        }
     }
+    return os;
 }
 
 #endif // HULK_HTTP_CONSTANTS_H_

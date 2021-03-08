@@ -63,7 +63,7 @@ namespace hulk
         void read_body()
         {
             log::debug("Reading message body...");
-            asio::async_read_until(m_socket, m_message_buffer, '\n\r',
+            asio::async_read_until(m_socket, m_message_buffer, std::string("\r\n"),
                 [this](std::error_code ec, std::size_t bytes_transferred)
                 {
                     size_t buffer_size = asio::buffer_size(m_message_buffer.data());
@@ -76,7 +76,7 @@ namespace hulk
         void read_header()
         {
             log::debug("Reading message header...");
-            asio::async_read_until(m_socket, m_message_buffer, '\n\r',
+            asio::async_read_until(m_socket, m_message_buffer, std::string("\r\n"),
                 [this](std::error_code ec, std::size_t bytes_transferred)
                 {
                     size_t buffer_size = asio::buffer_size(m_message_buffer.data());
@@ -117,7 +117,7 @@ namespace hulk
         void read_request_status()
         {
             log::debug("Reading request status line...");
-            asio::async_read_until(m_socket, m_message_buffer, '\r\n', 
+            asio::async_read_until(m_socket, m_message_buffer, std::string("\r\n"), 
                 [this](std::error_code ec, std::size_t bytes_transferred)
                 {
                     if (!ec)
