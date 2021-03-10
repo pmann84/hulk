@@ -5,8 +5,17 @@
 #include <sstream>
 #include <ostream>
 
+#include <asio.hpp>
+
 namespace hulk
 {
+    std::string socket_to_string(asio::ip::tcp::socket& socket)
+    {
+        std::stringstream ss;
+        ss << socket.remote_endpoint().address().to_string() << ":" << socket.remote_endpoint().port();
+        return ss.str();
+    }
+
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages
     enum class HttpMethod
     {

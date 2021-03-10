@@ -1,7 +1,5 @@
-#include "connection.hpp"
 #include "response.hpp"
-
-// #include <asio.hpp>
+#include "connection_manager.hpp"
 
 namespace hulk
 {
@@ -32,13 +30,7 @@ namespace hulk
             log::debug("Running context in separate thread.");
             m_context_run_thread = std::thread([this](){ m_context.run(); });
             log::info("Server started successfully!");
-            log::info("Server listening on http://127.0.0.1:{}", m_acceptor.local_endpoint().port());
-
-            // http::response response;
-            // response.status = 404;
-            // response.add_date_header();
-            // log::debug(response.to_string());
-            
+            log::info("Server listening on http://127.0.0.1:{}", m_acceptor.local_endpoint().port());           
             while(!m_context.stopped()) 
             {
                 update();
@@ -47,12 +39,6 @@ namespace hulk
 
         void update()
         {
-            // process messages off the queue here
-            if (!m_active_connection_updated)
-            {
-                m_active_connection_updated = true;
-                log::debug("Active Connections: {}", m_active_connections.size());
-            }
         }
 
     private:
@@ -65,14 +51,8 @@ namespace hulk
                     {
                         // OK!
                         log::debug("Recieved new connection on http://127.0.0.1:{}", socket.remote_endpoint().port());
-                        auto conn = std::make_shared<connection>(std::move(socket));
-                        m_active_connections.push_back(conn); //TODO Sort this out as the connections never get disposed
-                        m_active_connection_updated = false;
-                        // Create a connection object to deal with reading the message - decide how 
-                        // long these will live, we could store these until the message and route has 
-                        // been completely processed, then use it write the response out or just create 
-                        // a new connection every time - depends on how we will do the writing
-                        conn->start();
+                        auto conn = std::make_shared<connection>(std::move(socket), m_active_connections);
+                        m_active_connections.start(conn);
                     }
                     else
                     {
@@ -87,12 +67,6 @@ namespace hulk
         asio::io_context m_context; // IO Context
         asio::ip::tcp::acceptor m_acceptor; // Acceptor that listens on endpoint (abstracts the socket)
         std::thread m_context_run_thread;
-        std::vector<std::shared_ptr<connection>> m_active_connections;
-        bool m_active_connection_updated = false;
-        // message_queue m_message_queue;
-        // std::vector<std::shared_ptr<connection>> m_connections;
-        // std::vector<std::string> m_messages;
-        // std::streambuf m_message_buffer; // Messages are read asynchronously so we store the message here until its ready
-        // message processing queue
+        connection_manager m_active_connections;
     };
 }

@@ -5,24 +5,39 @@
 #include "request.hpp"
 #include "response.hpp"
 #include "constants.hpp"
+#include "iconnection_manager.hpp"
 
 #include <asio.hpp>
+#include <memory>
 
 namespace hulk
 {
-    // This class is responsible for handling a single HTTP request, reading it off the socket, parsing it, and then executing the handler
-    class connection
+    // This class is responsible for handling a single HTTP request, reading it off the socket, 
+    // parsing it, and then executing the handler
+    class connection : public std::enable_shared_from_this<connection>
     {
     public:
-        connection(asio::ip::tcp::socket socket) 
+        connection(asio::ip::tcp::socket socket, iconnection_manager& conn_manager) 
             : m_socket(std::move(socket))
+            , m_connection_manager(conn_manager)
         {
-           log::debug("Creating new connection to handle incoming message.");
+            log::debug("Creating new connection to handle request from endpoint {}", socket_to_string(m_socket));
+        }
+
+        ~connection()
+        {
+            log::debug("Disposing connection for endpoint {}", socket_to_string(m_socket));
+            stop();
         }
 
         void start()
         {
             read_request_status();
+        }
+
+        void stop()
+        {
+            m_socket.close();
         }
 
         const http::request& request() const
@@ -45,6 +60,7 @@ namespace hulk
                     {
                         log::error("Error sending response!");
                     }
+                    m_connection_manager.stop(shared_from_this());
                 }
             );
         }
@@ -142,9 +158,9 @@ namespace hulk
 
     private:
         asio::ip::tcp::socket m_socket;
-        // message_queue& m_message_queue;
         asio::streambuf m_message_buffer; // Messages are read asynchronously so we store the message here until its ready
         http::request m_request;
+        iconnection_manager& m_connection_manager;
     };
 }
 
