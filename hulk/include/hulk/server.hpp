@@ -1,5 +1,4 @@
 #include "connection.hpp"
-#include "message_queue.hpp"
 #include "response.hpp"
 
 // #include <asio.hpp>
