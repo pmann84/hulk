@@ -50,7 +50,7 @@ namespace hulk
                     if (!error_code)
                     {
                         // OK!
-                        log::debug("Recieved new connection on http://127.0.0.1:{}", socket.remote_endpoint().port());
+                        log::info("Recieved new connection on http://127.0.0.1:{}", socket.remote_endpoint().port());
                         auto conn = std::make_shared<connection>(std::move(socket), m_active_connections);
                         m_active_connections.start(conn);
                     }

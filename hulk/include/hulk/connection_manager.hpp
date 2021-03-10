@@ -16,7 +16,7 @@ namespace hulk
         void start(std::shared_ptr<connection> conn) override
         {
             m_connections.insert(conn);
-            log::debug("Connection started: {} connections active.", m_connections.size());
+            log::info("Connection started: {} connections active.", m_connections.size());
             conn->start();
         }
 
@@ -24,7 +24,7 @@ namespace hulk
         {
             // conn->stop();
             m_connections.erase(conn);
-            log::debug("Connection stopped: {} active connections remaining.", m_connections.size());
+            log::info("Connection stopped: {} active connections remaining.", m_connections.size());
         }
 
     private:
