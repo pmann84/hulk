@@ -85,6 +85,7 @@ namespace hulk
                     ss << body.data();
                     ss << "\r\n";
                 }
+                ss << "\r\n";
                 return ss.str();
             }
 

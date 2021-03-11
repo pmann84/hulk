@@ -48,21 +48,26 @@ namespace hulk
         }
 
     private:
-        void send(http::response response, asio::ip::tcp::socket& socket)
+        void send(http::response response)
         {
             std::shared_ptr<std::string> response_str = std::make_shared<std::string>(response.to_string());
-            asio::async_write(socket, asio::buffer(response_str->c_str(), response_str->length()), 
+            asio::async_write(m_socket, asio::buffer(response_str->c_str(), response_str->length()), 
                 [this, response_str](const std::error_code& ec, std::size_t bytes_sent)
                 {
                     if (!ec)
                     {
-                        log::info("Sending response ({} bytes):\n{}", bytes_sent, *response_str);
+                        log::info("Sending response:\nBytes Sent: {}\nResponse Bytes: {}\nResponse Data: {}", bytes_sent, response_str->length(), *response_str);
+                        m_socket.shutdown(asio::ip::tcp::socket::shutdown_both);
                     }
                     else
                     {
                         log::error("Error sending response!");
                     }
-                    m_connection_manager.stop(shared_from_this());
+
+                    if (ec != asio::error::operation_aborted)
+                    {
+                        m_connection_manager.stop(shared_from_this());
+                    }
                 }
             );
         }
@@ -86,7 +91,7 @@ namespace hulk
                 {
                     size_t buffer_size = asio::buffer_size(m_message_buffer.data());
                     log::debug("Read {} bytes. Current buffer size = {}", bytes_transferred, buffer_size);
-                    
+                    // Also do routing here
                 }
             );       
         }
