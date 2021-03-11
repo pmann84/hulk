@@ -149,10 +149,20 @@ int main()
 
     // // Start by supporting simple function calls, lambda, function ptr, bound class member call
     app.route("/api", 
-        [](const hulk::http::request&)
+        [](const hulk::http::request& request)
         {
-            // return hulk::http::response::ok();
-            return hulk::http::response::ok("<html><h1>Hello, World!</h1></html>");
+            switch (request.method)
+            {
+                case hulk::HttpMethod::Get:
+                {
+                    return hulk::http::response::ok("<html><h1>Hello, World!</h1></html>");
+                }
+                case hulk::HttpMethod::Post:
+                {
+                    return hulk::http::response(201);
+                }
+            }
+            return hulk::http::response::ok();
         }
     );
     // app.route("hello/<int:id>", &routing_func);
