@@ -151,8 +151,8 @@ int main()
     app.route("/api", 
         [](const hulk::http::request&)
         {
-            return hulk::http::response::ok();
-            // return hulk::http::response::ok("<html><h1>Hello, World!</h1></html>");
+            // return hulk::http::response::ok();
+            return hulk::http::response::ok("<html><h1>Hello, World!</h1></html>");
         }
     );
     // app.route("hello/<int:id>", &routing_func);

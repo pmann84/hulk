@@ -44,7 +44,7 @@ namespace hulk
                 add_header("Server", server);
             }
 
-            void add_content_length_header(uint32_t length)
+            void add_content_length_header(uint64_t length)
             {
                 add_header("Content-Length", std::to_string(length));
             }
