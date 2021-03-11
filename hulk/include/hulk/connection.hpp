@@ -6,6 +6,7 @@
 #include "response.hpp"
 #include "constants.hpp"
 #include "iconnection_manager.hpp"
+#include "router.hpp"
 
 #include <asio.hpp>
 #include <memory>
@@ -17,9 +18,10 @@ namespace hulk
     class connection : public std::enable_shared_from_this<connection>
     {
     public:
-        connection(asio::ip::tcp::socket socket, iconnection_manager& conn_manager) 
+        connection(asio::ip::tcp::socket socket, iconnection_manager& conn_manager, router& router) 
             : m_socket(std::move(socket))
             , m_connection_manager(conn_manager)
+            , m_router(router)
         {
             log::debug("Creating new connection to handle request from endpoint {}", socket_to_string(m_socket));
         }
@@ -111,9 +113,9 @@ namespace hulk
                             // ROUTING
                             log::info("Recieved message: \n{}", m_request.to_string());
                             log::info("Executing route {} handler {}", m_request.target, "HANDLER HERE");
-                            // For now just return a canned response
-                            http::response response;
-                            response.body.add_body_data("<html><h1>Hello, World!</h1></html>", "text/html");
+                            // Query the router for the target and pass in the request
+                            auto route_handler = m_router.try_get(m_request.target);
+                            auto response = route_handler(m_request);
                             send(response, m_socket);
                         }
                         else
@@ -161,6 +163,7 @@ namespace hulk
         asio::streambuf m_message_buffer; // Messages are read asynchronously so we store the message here until its ready
         http::request m_request;
         iconnection_manager& m_connection_manager;
+        router m_router;
     };
 }
 

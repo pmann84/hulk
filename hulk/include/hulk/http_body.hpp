@@ -29,18 +29,14 @@ namespace hulk
             return m_data;
         }
 
-        std::string content_length() const
+        uint64_t content_length() const
         {
-            std::stringstream ss;
-            ss << "Content-Length: " << m_data.size() << "\r\n";
-            return ss.str();
+            return m_data.size();
         }
 
         std::string content_type() const
         {
-            std::stringstream ss;
-            ss << "Content-Type: " << m_data_type << "\r\n";
-            return ss.str();
+            return m_data_type;
         }
 
     private:

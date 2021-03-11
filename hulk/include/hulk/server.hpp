@@ -1,13 +1,15 @@
 #include "response.hpp"
 #include "connection_manager.hpp"
+#include "router.hpp"
 
 namespace hulk
 {
     class server
     {
     public:
-        server(uint32_t port) 
+        server(uint32_t port, router& router) 
             : m_acceptor(m_context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
+            , m_router(router)
         { 
         }
 
@@ -51,7 +53,7 @@ namespace hulk
                     {
                         // OK!
                         log::info("Recieved new connection on http://127.0.0.1:{}", socket.remote_endpoint().port());
-                        auto conn = std::make_shared<connection>(std::move(socket), m_active_connections);
+                        auto conn = std::make_shared<connection>(std::move(socket), m_active_connections, m_router);
                         m_active_connections.start(conn);
                     }
                     else
@@ -68,5 +70,6 @@ namespace hulk
         asio::ip::tcp::acceptor m_acceptor; // Acceptor that listens on endpoint (abstracts the socket)
         std::thread m_context_run_thread;
         connection_manager m_active_connections;
+        router& m_router;
     };
 }

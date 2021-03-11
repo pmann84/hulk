@@ -148,7 +148,13 @@ int main()
     //    .multithreaded();
 
     // // Start by supporting simple function calls, lambda, function ptr, bound class member call
-    // app.route("api", [](){});
+    app.route("/api", 
+        [](const hulk::http::request&)
+        {
+            return hulk::http::response::ok();
+            // return hulk::http::response::ok("<html><h1>Hello, World!</h1></html>");
+        }
+    );
     // app.route("hello/<int:id>", &routing_func);
 
     app.run();

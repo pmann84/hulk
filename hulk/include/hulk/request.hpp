@@ -17,11 +17,6 @@ namespace hulk
 {
     namespace http
     {
-        struct body
-        {
-
-        };
-
         struct request
         {
             HttpMethod method; // Method on the request

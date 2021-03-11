@@ -19,7 +19,7 @@ namespace hulk
             http_headers headers;
             http_body body;
             
-            response()
+            response(uint32_t status) : status(status)
             {
                 add_date_header();
                 add_header("Connection", "close");
@@ -44,12 +44,33 @@ namespace hulk
                 add_header("Server", server);
             }
 
-            std::string to_string()
+            void add_content_length_header(uint32_t length)
+            {
+                add_header("Content-Length", std::to_string(length));
+            }
+
+            void add_content_type_header(std::string type)
+            {
+
+                add_header("Content-Type", type);
+            }
+
+            void add_content_header()
             {
                 if(body.empty())
                 {
-                    add_header("Content-Length", "0");
+                    add_content_length_header(0);
                 }
+                else
+                {
+                    add_content_length_header(body.content_length());
+                    add_content_type_header(body.content_type());
+                }
+            }
+
+            std::string to_string()
+            {
+                add_content_header();
                 
                 std::stringstream ss;
                 ss << version << " " << status << " " << StatusCodeMap[status] << "\r\n";
@@ -60,15 +81,31 @@ namespace hulk
                 // Output body
                 if (!body.empty())
                 {
-                    ss << body.content_length();
-                    ss << body.content_type();
                     ss << "\r\n";
                     ss << body.data();
+                    ss << "\r\n";
                 }
                 return ss.str();
             }
+
+            static http::response ok()
+            {
+                return http::response(200);
+            }
+
+            static http::response ok(std::string body)
+            {
+                http::response response_with_body(200);
+                response_with_body.body.add_body_data(body, "text/html");
+                return response_with_body;
+            }
+
+            static http::response not_found()
+            {
+                return http::response(404);
+            }
         };
-    }
-}
+    } // namespace http
+} // namespace hulk
 
 #endif // HULK_RESPONSE_H_

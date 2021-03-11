@@ -3,6 +3,7 @@
 
 #include "logging.hpp"
 #include "server.hpp"
+#include "router.hpp"
 
 #include <cstdint>
 #include <thread>
@@ -31,15 +32,21 @@ namespace hulk
             return *this;
         }
 
+        void route(std::string url, route_handler_t handler)
+        {
+            m_router.add(url, handler);
+        }
+
         void run()
         {
-            m_server = std::make_unique<server>(m_port);
+            m_server = std::make_unique<server>(m_port, m_router);
             m_server->run();
         }
         
     private:
         bool m_debug;
         uint32_t m_port;
+        router m_router;
         std::unique_ptr<server> m_server;
     };
 
