@@ -121,7 +121,7 @@ namespace hulk
                             // Query the router for the target and pass in the request
                             auto route_handler = m_router.try_get(m_request.target);
                             auto response = route_handler(m_request);
-                            send(response, m_socket);
+                            send(response);
                         }
                         else
                         {
