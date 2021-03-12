@@ -142,7 +142,7 @@ namespace hulk
         void receive()
         {
             log::debug("Reading data off socket...");
-            asio::async_read_until(m_socket, m_message_buffer, std::string("\r\n"),
+            asio::async_read_until(m_socket, m_message_buffer, CRLF,
                 [this](std::error_code ec, std::size_t bytes_transferred)
                 {
                     if (!ec)

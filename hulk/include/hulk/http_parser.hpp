@@ -111,7 +111,7 @@ namespace hulk
 
             std::string key_str, val_str;
             ss >> key_str >> val_str;
-            if (header_string == std::string("\r\n") || key_str.empty() || val_str.empty())
+            if (header_string == CRLF || key_str.empty() || val_str.empty())
             {
                 return parser::read_status::request_body;
             }

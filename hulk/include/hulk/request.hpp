@@ -28,12 +28,15 @@ namespace hulk
             std::string to_string() const
             {
                 std::stringstream req;
-                req << method << " " << target << " " << version << "\r\n";
+                req << method << " " << target << " " << version << CRLF;
                 for (auto &[key, value] : headers.headers())
                 {
-                    req << key << ": " << value << "\r\n";
+                    req << key << ": " << value << CRLF;
                 }
-                req << body.data();
+                if (!body.empty())
+                {
+                    req << CRLF << body.data();
+                }
                 return req.str();
             }
         };

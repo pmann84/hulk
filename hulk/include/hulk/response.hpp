@@ -73,18 +73,18 @@ namespace hulk
                 add_content_header();
                 
                 std::stringstream ss;
-                ss << version << " " << status << " " << StatusCodeMap[status] << "\r\n";
+                ss << version << " " << status << " " << StatusCodeMap[status] << CRLF;
                 for (auto &[key, value] : headers.headers())
                 {
-                    ss << key << ": " << value << "\r\n";
+                    ss << key << ": " << value << CRLF;
                 }
                 // Output body
                 if (!body.empty())
                 {
-                    ss << "\r\n";
+                    ss << CRLF;
                     ss << body.data();
                 }
-                ss << "\r\n";
+                ss << CRLF;
                 return ss.str();
             }
 

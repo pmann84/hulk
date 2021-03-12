@@ -9,6 +9,8 @@
 
 namespace hulk
 {
+    static std::string CRLF = "\r\n";
+
     std::string socket_to_string(asio::ip::tcp::socket& socket)
     {
         std::stringstream ss;
