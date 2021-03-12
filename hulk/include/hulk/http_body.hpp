@@ -10,9 +10,8 @@ namespace hulk
     public:
         http_body() = default;
 
-        void add_body_data(std::string data, std::string data_type)
+        void data_type(std::string data_type)
         {
-            m_data.append(data);
             m_data_type = data_type;
         }
 
@@ -38,6 +37,12 @@ namespace hulk
         {
             return m_data_type;
         }
+
+        http_body& operator<<(std::string s)
+        {
+            m_data.append(s);
+            return *this;
+        } 
 
     private:
         std::string m_data;

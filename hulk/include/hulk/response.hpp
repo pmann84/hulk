@@ -96,7 +96,8 @@ namespace hulk
             static http::response ok(std::string body)
             {
                 http::response response_with_body(200);
-                response_with_body.body.add_body_data(body, "text/html");
+                response_with_body.body << body;
+                response_with_body.body.data_type("text/html");
                 return response_with_body;
             }
 
