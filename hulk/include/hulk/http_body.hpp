@@ -10,7 +10,7 @@ namespace hulk
     public:
         http_body() = default;
 
-        void data_type(std::string data_type)
+        void content_type(std::string data_type)
         {
             m_data_type = data_type;
         }

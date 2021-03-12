@@ -6,6 +6,7 @@
 #include "http_body.hpp"
 #include <sstream>
 #include <ctime>
+#include <time.h>
 #include <iomanip>
 
 namespace hulk
@@ -22,7 +23,7 @@ namespace hulk
             response(uint32_t status) : status(status)
             {
                 add_date_header();
-                add_header("Connection", "close");
+                // add_header("Connection", "close");
             }
 
             void add_header(std::string key, std::string value)
@@ -34,8 +35,10 @@ namespace hulk
             {
                 // Date: Mon, 27 Jul 2009 12:28:53 GMT
                 std::time_t t = std::time(nullptr);
+                std::tm tm;
+                gmtime_s(&tm, &t);
                 std::stringstream datetime_ss;
-                datetime_ss << std::put_time(std::gmtime(&t), "%a, %d %b %Y %T %Z");
+                datetime_ss << std::put_time(&tm, "%a, %d %b %Y %T %Z");
                 add_header("Date", datetime_ss.str());
             }
 
@@ -97,7 +100,7 @@ namespace hulk
             {
                 http::response response_with_body(200);
                 response_with_body.body << body;
-                response_with_body.body.data_type("text/html");
+                response_with_body.body.content_type("text/html");
                 return response_with_body;
             }
 

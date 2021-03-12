@@ -51,7 +51,7 @@ namespace hulk
                 {
                     log::debug("Parsing request status from message data ({})...", data);
                     m_read_status = parse_status(data);
-                    m_status = parser::status::incomplete;
+                    m_status = validate_status(); // TODO: Can we just send the status line and no headers in a request?
                     break;
                 }
                 case parser::read_status::request_header:
@@ -86,6 +86,11 @@ namespace hulk
         }
 
     private:
+        void parse_target(std::string& target_string)
+        {
+            // Here we parse query parameters that may have been supplied
+        }
+
         parser::read_status parse_status(std::string& status_string)
         {
             std::stringstream ss;
@@ -113,6 +118,9 @@ namespace hulk
             ss >> key_str >> val_str;
             if (header_string == CRLF || key_str.empty() || val_str.empty())
             {
+                // Set the content type on the body too
+                auto [success, content_type] = m_request.headers.get("Content-Type");
+                m_request.body.content_type(content_type);
                 return parser::read_status::request_body;
             }
             key_str = strings::trim_right(key_str, ':');
@@ -124,6 +132,15 @@ namespace hulk
         {
             m_request.body << body_string;
             return parser::read_status::request_body;
+        }
+
+        parser::status validate_status()
+        {
+            if (m_request.version == HttpVersion::Unknown || m_request.method == HttpMethod::Unknown)
+            {
+                return parser::status::bad_request;
+            }
+            return parser::status::incomplete;
         }
 
     private:

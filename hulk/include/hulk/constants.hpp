@@ -10,6 +10,7 @@
 namespace hulk
 {
     static std::string CRLF = "\r\n";
+    static std::string HTTP_DATETIME_FORMAT = "%a, %d %b %Y %T %Z";
 
     std::string socket_to_string(asio::ip::tcp::socket& socket)
     {
@@ -21,15 +22,16 @@ namespace hulk
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages
     enum class HttpMethod
     {
-        Get     = 1 << 0, // GET method requests a representation of the specified resource. Requests using GET should only retrieve data.
-        Head    = 1 << 1, // HEAD method asks for a response identical to that of a GET request, but without the response body.
-        Post    = 1 << 2, // POST method is used to submit an entity to the specified resource, often causing a change in state or side effects on the server.
-        Put     = 1 << 3, // PUT method replaces all current representations of the target resource with the request payload.
-        Delete  = 1 << 4, // DELETE method deletes the specified resource.
-        Connect = 1 << 5, // CONNECT method establishes a tunnel to the server identified by the target resource.
-        Options = 1 << 6, // OPTIONS method is used to describe the communication options for the target resource.
-        Trace   = 1 << 7, // TRACE method performs a message loop-back test along the path to the target resource.
-        Patch   = 1 << 8, //  PATCH method is used to apply partial modifications to a resource.
+        Unknown, // Invalid http method
+        Get    , // GET method requests a representation of the specified resource. Requests using GET should only retrieve data.
+        Head   , // HEAD method asks for a response identical to that of a GET request, but without the response body.
+        Post   , // POST method is used to submit an entity to the specified resource, often causing a change in state or side effects on the server.
+        Put    , // PUT method replaces all current representations of the target resource with the request payload.
+        Delete , // DELETE method deletes the specified resource.
+        Connect, // CONNECT method establishes a tunnel to the server identified by the target resource.
+        Options, // OPTIONS method is used to describe the communication options for the target resource.
+        Trace  , // TRACE method performs a message loop-back test along the path to the target resource.
+        Patch  , //  PATCH method is used to apply partial modifications to a resource.
     };
 
     hulk::HttpMethod method_from_string(std::string method)
@@ -52,14 +54,13 @@ namespace hulk
             return hulk::HttpMethod::Trace;
         else if (method == "PATCH")
             return hulk::HttpMethod::Patch;
-        std::stringstream ss;
-        ss << "Cannot parse HTTP Method: " << method; 
-        log::error(ss.str());
-        throw std::runtime_error(ss.str());
+        else
+            return hulk::HttpMethod::Unknown;
     }
 
     enum class HttpVersion
     {
+        Unknown,
         Http09,
         Http10,
         Http11,
@@ -76,10 +77,8 @@ namespace hulk
             return HttpVersion::Http11;
         else if (version == "HTTP/2.0")
             return HttpVersion::Http20;
-        std::stringstream ss;
-        ss << "Cannot parse HTTP version: " << version; 
-        log::error(ss.str());
-        throw std::runtime_error(ss.str());
+        else
+            return HttpVersion::Unknown;
     }
 
     static std::map<uint32_t, std::string> StatusCodeMap = {
@@ -139,6 +138,70 @@ namespace hulk
         {511, "Network Authentication Required"},
     };
 
+    namespace content_type
+    {
+        enum class application
+        {
+            json,
+            xml,
+        };
+
+        enum class text
+        {
+            css,
+            csv,
+            html,
+            javascript,
+            plain,
+            xml,
+        };
+
+        enum class audio
+        {
+            // audio/mpeg
+            // audio/x-ms-wma
+            // audio/vnd.rn-realaudio
+            // audio/x-wav
+        };
+
+        enum class image
+        {
+            // image/gif
+            // image/jpeg
+            // image/png
+            // image/tiff
+            // image/vnd.microsoft.icon
+            // image/x-icon
+            // image/vnd.djvu
+            // image/svg+xml
+        };
+
+        enum class video
+        {
+            // video/mpeg
+            // video/mp4
+            // video/quicktime
+            // video/x-ms-wmv
+            // video/x-msvideo
+            // video/x-flv
+            // video/webm
+        };
+    }
+
+    static std::map<content_type::application, std::string> ContentTypeApplicationMap = {
+        {content_type::application::json, "application/json"},
+        {content_type::application::xml, "application/xml"},
+    };
+
+    static std::map<content_type::text, std::string> ContentTypeMap = {
+        {content_type::text::css, "text/css"},
+        {content_type::text::csv, "text/csv"},
+        {content_type::text::html, "text/html"},
+        {content_type::text::javascript, "text/javascript"},
+        {content_type::text::plain, "text/plain"},
+        {content_type::text::xml, "text/xml"},
+    };
+
     // Content headers
     // application/EDI-X12
     // application/EDIFACT
@@ -148,41 +211,23 @@ namespace hulk
     // application/pdf
     // application/xhtml+xml
     // application/x-shockwave-flash
-    // application/json
     // application/ld+json
     // application/xml
     // application/zip
     // application/x-www-form-urlencoded
-    // Audio	audio/mpeg
-    // audio/x-ms-wma
-    // audio/vnd.rn-realaudio
-    // audio/x-wav
-    // Image	image/gif
-    // image/jpeg
-    // image/png
-    // image/tiff
-    // image/vnd.microsoft.icon
-    // image/x-icon
-    // image/vnd.djvu
-    // image/svg+xml
-    // Multipart	multipart/mixed
+    // Audio	
+
+    // Image	
+
+    // Multipart	
+    // multipart/mixed
     // multipart/alternative
     // multipart/related (using by MHTML (HTML mail).)
     // multipart/form-data
-    // Text	text/css
-    // text/csv
-    // text/html
-    // text/javascript (obsolete)
-    // text/plain
-    // text/xml
-    // Video	video/mpeg
-    // video/mp4
-    // video/quicktime
-    // video/x-ms-wmv
-    // video/x-msvideo
-    // video/x-flv
-    // video/webm
-    // VND	application/vnd.oasis.opendocument.text
+    // Video	
+
+    // VND	
+    // application/vnd.oasis.opendocument.text
     // application/vnd.oasis.opendocument.spreadsheet
     // application/vnd.oasis.opendocument.presentation
     // application/vnd.oasis.opendocument.graphics
