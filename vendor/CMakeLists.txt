@@ -1,6 +1,9 @@
 # TODO: Make this condition with a build tests flag
 add_subdirectory(googletest)
 
+# json directory
+set(JSON_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/json/single_include PARENT_SCOPE)
+
 # Add header only spdlog directory
 set(SPDLOG_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/spdlog/include PARENT_SCOPE)
 

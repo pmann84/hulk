@@ -5,5 +5,6 @@
 #include "app.hpp"
 #include "request.hpp"
 #include "response.hpp"
+#include "json.hpp"
 
 #endif // HULK_H_

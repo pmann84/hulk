@@ -7,6 +7,8 @@ project(
     LANGUAGES CXX
 )
 
+set(CMAKE_VERBOSE_MAKEFILE ON)
+
 # Disable the ZERO_CHECK project generation
 set(CMAKE_SUPPRESS_REGENERATION true)
 

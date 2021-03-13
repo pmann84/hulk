@@ -4,6 +4,8 @@
 #include "constants.hpp"
 #include "http_headers.hpp"
 #include "http_body.hpp"
+#include "json.hpp"
+
 #include <sstream>
 #include <ctime>
 #include <time.h>
@@ -101,6 +103,14 @@ namespace hulk
                 http::response response_with_body(200);
                 response_with_body.body << body;
                 response_with_body.body.content_type("text/html");
+                return response_with_body;
+            }
+
+            static http::response ok(json body)
+            {
+                http::response response_with_body(200);
+                response_with_body.body << body.dump();
+                response_with_body.body.content_type("application/json");
                 return response_with_body;
             }
 

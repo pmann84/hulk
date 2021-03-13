@@ -11,6 +11,7 @@ target_include_directories(${PROJECT_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/include 
         ${SPDLOG_INCLUDE_DIRECTORIES}
         ${ASIO_INCLUDE_DIRECTORIES}
+        ${JSON_INCLUDE_DIRECTORIES}
 )
 
 target_sources(
