@@ -18,7 +18,7 @@ then just include the main header
 ## Example
 See the examples project for more, but a simple example might look like this
 ```c++
-#include "hulk/hulk.hpp
+#include "hulk/hulk.hpp"
 
 int main()
 {
