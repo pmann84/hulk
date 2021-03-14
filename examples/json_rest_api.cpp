@@ -11,8 +11,17 @@ int main()
         {
             switch (request.method)
             {
-                hulk::json response = "{ \"Hello\",\"World\" }"_json;
-                return hulk::http::response::ok(response);
+                case hulk::HttpMethod::Get:
+                { 
+                    // hulk::json response = "{ \"Hello\",\"World\" }"_json;
+                    hulk::json response;
+                    response["Hello"] = "World";
+                    return hulk::http::response::ok(response.dump(), "application/json");
+                }
+                default:
+                {
+                    return hulk::http::response::not_found();
+                }
             }
         }
     );

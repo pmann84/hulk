@@ -5,7 +5,7 @@
 
 namespace hulk
 {
-    typedef json = json;
+    typedef nlohmann::json json;
 }
 
 #endif // HULK_JSON_H_

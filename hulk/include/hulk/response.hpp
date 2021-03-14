@@ -98,25 +98,22 @@ namespace hulk
                 return http::response(200);
             }
 
-            static http::response ok(std::string body)
+            static http::response ok(std::string body, std::string body_type = "text/html")
             {
-                http::response response_with_body(200);
+                http::response response_with_body = ok();
                 response_with_body.body << body;
-                response_with_body.body.content_type("text/html");
-                return response_with_body;
-            }
-
-            static http::response ok(json body)
-            {
-                http::response response_with_body(200);
-                response_with_body.body << body.dump();
-                response_with_body.body.content_type("application/json");
+                response_with_body.body.content_type(body_type);
                 return response_with_body;
             }
 
             static http::response not_found()
             {
                 return http::response(404);
+            }
+
+            static http::response created()
+            {
+                return http::response(201);
             }
         };
     } // namespace http

@@ -102,6 +102,7 @@ namespace hulk
             log::debug("Message data: {}", ss.str());
             // Pass the data to the parser
             m_parser << ss.str();
+            log::debug("BYTES LEFT IN BUFFER: {}", m_message_buffer.size());
             if (m_parser.status() == parser::status::completed)
             {
                 log::info("Finished reading message:\n{}", m_request.to_string());

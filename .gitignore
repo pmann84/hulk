@@ -5,3 +5,5 @@ build
 out
 Debug
 Release
+.idea
+cmake-build-*
