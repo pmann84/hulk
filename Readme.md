@@ -49,6 +49,7 @@ cmake --build . --config Debug
 ## Current Development
 Currently this is a very miminally featured web framework, that has very little url parsing support. Currently it only supports the addition of basic non parameterised url tokens
 - Proper routing of urls
+- Tighten up validation of http requests when parsing them
 - Make logging more minimal
 
 ## Future Development
