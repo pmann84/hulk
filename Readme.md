@@ -49,10 +49,7 @@ cmake --build . --config Debug
 ## Current Development
 Currently this is a very miminally featured web framework, that has very little url parsing support. Currently it only supports the addition of basic non parameterised url tokens
 - Proper routing of urls
-- Writing json body data in response
-- Support for passing query parameters to routes
-- Support for passing body data to routes
-- Support for query parameters in request 
+- Make logging more minimal
 
 ## Future Development
 Below is a list of issues that need addressing - these will eventually move to github issues tracking

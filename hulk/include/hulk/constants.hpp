@@ -9,8 +9,13 @@
 
 namespace hulk
 {
+    class parameter_map;
+
     static std::string CRLF = "\r\n";
     static std::string HTTP_DATETIME_FORMAT = "%a, %d %b %Y %T %Z";
+
+    using http_headers = parameter_map;
+    using query_parameters = parameter_map;
 
     std::string socket_to_string(asio::ip::tcp::socket& socket)
     {

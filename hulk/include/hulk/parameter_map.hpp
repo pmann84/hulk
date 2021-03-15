@@ -6,33 +6,33 @@
 
 namespace hulk
 {
-    class http_headers
+    class parameter_map
     {
     public:
-        http_headers() = default;
+        parameter_map() = default;
 
         std::pair<bool, std::string> get(std::string key)
         {
-            auto result_it = m_headers.find(key);
-            if (result_it != m_headers.end())
+            auto result_it = m_parameters.find(key);
+            if (result_it != m_parameters.end())
             {
-                return std::make_pair(true, m_headers[key]);
+                return std::make_pair(true, m_parameters[key]);
             }
             return std::make_pair(false, "");
         }
 
         void add(std::string key, std::string value)
         {
-            m_headers[key] = value;
+            m_parameters[key] = value;
         }
 
         const std::map<std::string, std::string>& headers() const
         {
-            return m_headers;
+            return m_parameters;
         }
 
     private:
-        std::map<std::string, std::string> m_headers;
+        std::map<std::string, std::string> m_parameters;
     };
 }
 

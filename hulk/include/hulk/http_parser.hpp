@@ -86,9 +86,50 @@ namespace hulk
         }
 
     private:
-        void parse_target(std::string& target_string)
+        void parse_query_string(std::string query_string, http::request& request)
+        {
+            log::debug("Parsing query string: {}", query_string);
+            while (!query_string.empty())
+            {
+                auto pos = query_string.find_first_of("&");
+                if (pos == std::string::npos)
+                {
+                    // Only one parameter - split string to get key value pair
+                    auto param_pos = query_string.find_first_of("=");
+                    std::string key = query_string.substr(0, param_pos);
+                    std::string val = query_string.substr(param_pos+1, query_string.size());
+                    m_request.query_parameters.add(key, val);
+                    query_string = ""; // reset the string
+                }
+                else
+                {
+                    // Split - store first parameter, and set rest of the string to repeat
+                    std::string first_param_str = query_string.substr(0, pos);
+                    query_string = query_string.substr(pos+1, query_string.size());
+                    // Parse the parameter
+                    auto param_pos = first_param_str.find_first_of("=");
+                    std::string key = first_param_str.substr(0, param_pos);
+                    std::string val = first_param_str.substr(param_pos+1, query_string.size());
+                    m_request.query_parameters.add(key, val);
+                }
+            }
+        }
+
+        void parse_target(std::string& target_string, http::request& request)
         {
             // Here we parse query parameters that may have been supplied
+            auto pos = target_string.find_first_of("?");
+            // First check if we have any parameters
+            if (pos == std::string::npos)
+            {
+                m_request.target = target_string;
+            }
+            else
+            {
+                m_request.target = target_string.substr(0, pos);
+                std::string query_string = target_string.substr(pos + 1, target_string.size());
+                parse_query_string(query_string, request);
+            }
         }
 
         parser::read_status parse_status(std::string& status_string)
@@ -101,7 +142,7 @@ namespace hulk
             m_request.method = method_from_string(method_str); // HttpMethod
             std::string target_str;
             ss >> target_str; // String
-            m_request.target = target_str;
+            parse_target(target_str, m_request);
             std::string version_str;
             ss >> version_str;
             m_request.version = version_from_string(version_str); // HttpVersion

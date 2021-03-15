@@ -2,7 +2,7 @@
 #define HULK_RESPONSE_H_
 
 #include "constants.hpp"
-#include "http_headers.hpp"
+#include "parameter_map.hpp"
 #include "http_body.hpp"
 #include "json.hpp"
 

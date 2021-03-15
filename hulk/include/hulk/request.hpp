@@ -2,7 +2,7 @@
 #define HULK_REQUEST_H_
 
 #include "constants.hpp"
-#include "http_headers.hpp"
+#include "parameter_map.hpp"
 #include "http_body.hpp"
 #include "helpers.hpp"
 
@@ -24,6 +24,7 @@ namespace hulk
             HttpVersion version;
             http_headers headers;
             http_body body;
+            query_parameters query_parameters;
 
             std::string to_string() const
             {
