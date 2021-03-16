@@ -1,4 +1,4 @@
-#include "hulk/hulk.hpp"
+#include <hulk.hpp>
 
 int main()
 {    

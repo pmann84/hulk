@@ -31,6 +31,11 @@ namespace hulk
             return m_parameters;
         }
 
+        size_t size() const
+        {
+            return m_parameters.size();
+        }
+
     private:
         std::map<std::string, std::string> m_parameters;
     };

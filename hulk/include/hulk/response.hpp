@@ -73,7 +73,8 @@ namespace hulk
                 }
             }
 
-            std::string to_string()
+            // std::string to_string()
+            explicit operator std::string()
             {
                 add_content_header();
                 

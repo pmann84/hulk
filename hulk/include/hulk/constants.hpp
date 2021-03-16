@@ -1,6 +1,8 @@
 #ifndef HULK_HTTP_CONSTANTS_H_
 #define HULK_HTTP_CONSTANTS_H_
 
+#include "logging.hpp"
+
 #include <map>
 #include <sstream>
 #include <ostream>

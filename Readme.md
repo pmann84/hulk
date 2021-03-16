@@ -48,6 +48,8 @@ cmake --build . --config Debug
 ```
 ## Current Development
 Currently this is a very miminally featured web framework, that has very little url parsing support. Currently it only supports the addition of basic non parameterised url tokens
+- Allow duplicate query parameters 
+- Allow query parameters delimited by semicolon `;` as well as `&`
 - Proper routing of urls
 - Tighten up validation of http requests when parsing them
 - Make logging more minimal
@@ -56,7 +58,6 @@ Currently this is a very miminally featured web framework, that has very little 
 Below is a list of issues that need addressing - these will eventually move to github issues tracking
 - Implement multithreading - bascially implement a pool of contexts that can process requests in parallel - can only process requests from different servers in parallel
 - Middleware Response caching
-- Support for query parameters e.g. localhost:8080/hello?p1=5&p2=world etc etc
 - Investigate usage of classes for routes
 - Implement url namespaces i.e. providing a prefix to a set of api end points e.g. api/hello and api/world so you dont have to specify the prefix "api"
 - Unit tests

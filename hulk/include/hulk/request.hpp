@@ -26,7 +26,8 @@ namespace hulk
             http_body body;
             query_parameters query_parameters;
 
-            std::string to_string() const
+            // std::string to_string() const
+            explicit operator std::string()
             {
                 std::stringstream req;
                 req << method << " " << target << " " << version << CRLF;

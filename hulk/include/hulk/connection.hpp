@@ -72,7 +72,7 @@ namespace hulk
 
         void send(http::response response)
         {
-            std::shared_ptr<std::string> response_str = std::make_shared<std::string>(response.to_string());
+            std::shared_ptr<std::string> response_str = std::make_shared<std::string>(static_cast<std::string>(response));
             asio::async_write(m_socket, asio::buffer(response_str->c_str(), response_str->length()), 
                 [this, response_str](const std::error_code& ec, std::size_t bytes_sent)
                 {
@@ -105,7 +105,7 @@ namespace hulk
             log::debug("BYTES LEFT IN BUFFER: {}", m_message_buffer.size());
             if (m_parser.status() == parser::status::completed)
             {
-                log::info("Finished reading message:\n{}", m_request.to_string());
+                log::info("Finished reading message:\n{}", static_cast<std::string>(m_request));
                 // ROUTING
                 log::info("Executing route {} handler...", m_request.target);
                 // Execute request
