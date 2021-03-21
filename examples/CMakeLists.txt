@@ -6,3 +6,6 @@ target_link_libraries(simple_api PUBLIC Hulk)
 
 add_executable(json_rest_api json_rest_api.cpp)
 target_link_libraries(json_rest_api PUBLIC Hulk)
+
+add_executable(parameterised_urls parameterised_urls.cpp)
+target_link_libraries(parameterised_urls PUBLIC Hulk)

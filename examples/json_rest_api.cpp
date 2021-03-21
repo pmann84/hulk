@@ -13,7 +13,6 @@ int main()
             {
                 case hulk::HttpMethod::Get:
                 { 
-                    // hulk::json response = "{ \"Hello\",\"World\" }"_json;
                     hulk::json response;
                     response["Hello"] = "World";
                     return hulk::http::response::ok(response.dump(), "application/json");

@@ -8,6 +8,7 @@
 #include "iconnection_manager.hpp"
 #include "router.hpp"
 #include "http_parser.hpp"
+#include "urls.hpp"
 
 #include <asio.hpp>
 #include <memory>
@@ -53,8 +54,11 @@ namespace hulk
     private:    
         void execute_request()
         {
-            // Query the router for the target and pass in the request
+            // TODO: THIS!
+            // We need to be able to parse the route recieved against the parameterised versions
             auto route_handler = m_router.try_get(m_request.target);
+            // Populate the url info                
+            // Execute the handler passing in the request and url params
             auto response = route_handler(m_request);
             send(response);
         }
@@ -163,6 +167,7 @@ namespace hulk
         asio::ip::tcp::socket m_socket;
         asio::streambuf m_message_buffer; // Messages are read asynchronously so we store the message here until its ready
         http::request m_request;
+        // url_details m_details;
         http_parser m_parser;
         iconnection_manager& m_connection_manager;
         router m_router;

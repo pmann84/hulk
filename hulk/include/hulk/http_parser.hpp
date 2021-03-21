@@ -3,6 +3,7 @@
 
 #include "request.hpp"
 #include "constants.hpp"
+#include "helpers.hpp"
 
 namespace hulk
 {
@@ -89,27 +90,27 @@ namespace hulk
         void parse_query_string(std::string query_string, http::request& request)
         {
             log::debug("Parsing query string: {}", query_string);
-            while (!query_string.empty())
+            std::vector<std::string> query_params = strings::split(query_string, std::string("&"));
+            log::debug("{} query params detected...", query_params.size());
+            if (query_params.size() == 0)
             {
-                auto pos = query_string.find_first_of("&");
-                if (pos == std::string::npos)
+                m_status = parser::status::bad_request; 
+                return;
+            }
+
+            for (auto param : query_params)
+            {
+                std::vector<std::string> query_pair = strings::split(param, std::string("="));
+                if (query_pair.size() != 2)
                 {
-                    // Only one parameter - split string to get key value pair
-                    auto param_pos = query_string.find_first_of("=");
-                    std::string key = query_string.substr(0, param_pos);
-                    std::string val = query_string.substr(param_pos+1, query_string.size());
-                    m_request.query_parameters.add(key, val);
-                    query_string = ""; // reset the string
+                    m_status = parser::status::bad_request;
+                    return;
                 }
                 else
                 {
-                    // Split - store first parameter, and set rest of the string to repeat
-                    std::string first_param_str = query_string.substr(0, pos);
-                    query_string = query_string.substr(pos+1, query_string.size());
-                    // Parse the parameter
-                    auto param_pos = first_param_str.find_first_of("=");
-                    std::string key = first_param_str.substr(0, param_pos);
-                    std::string val = first_param_str.substr(param_pos+1, query_string.size());
+                    auto key = query_pair[0];
+                    auto val = query_pair[1];
+                    log::debug("Adding query parameter [{}: {}]", key, val);
                     m_request.query_parameters.add(key, val);
                 }
             }
@@ -177,7 +178,7 @@ namespace hulk
 
         parser::status validate_status()
         {
-            if (m_request.version == HttpVersion::Unknown || m_request.method == HttpMethod::Unknown)
+            if (m_status == parser::status::bad_request || m_request.version == HttpVersion::Unknown || m_request.method == HttpMethod::Unknown)
             {
                 return parser::status::bad_request;
             }

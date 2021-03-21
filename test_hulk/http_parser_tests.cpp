@@ -88,3 +88,13 @@ TEST(http_status_parser_tests, test_request_status_with_multiple_query_param_bad
     ASSERT_EQ(hulk::parser::status::bad_request, parser.status());
     ASSERT_EQ(hulk::parser::read_status::request_header, parser.read_status());
 }
+
+TEST(http_status_parser_tests, test_request_status_with_query_specifier_but_no_args_badly_formed)
+{
+    hulk::http::request request;
+    hulk::http_parser parser(request);
+
+    parser << "GET /api? HTTP/1.1";
+    ASSERT_EQ(hulk::parser::status::bad_request, parser.status());
+    ASSERT_EQ(hulk::parser::read_status::request_header, parser.read_status());
+}

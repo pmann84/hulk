@@ -2,7 +2,7 @@
 #define HULK_ROUTER_H_
 
 #include "response.hpp"
-
+#include "urls.hpp"
 #include <functional>
 #include <map>
 
@@ -12,6 +12,7 @@ namespace hulk
     {
         struct request;
     }
+    struct url_details;
 
     using route_handler_t = std::function<http::response(const http::request&)>;
 
@@ -22,6 +23,7 @@ namespace hulk
 
         void add(std::string url, route_handler_t handler)
         {
+            rule new_rule(url);
             m_route_map[url] = handler;
         }
 
