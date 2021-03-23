@@ -1,52 +1,46 @@
 #ifndef HULK_URLS_H_
 #define HULK_URLS_H_
 
+#include "string_helpers.hpp"
+
 #include<vector>
 #include<string>
+#include<regex>
 
 namespace hulk
 {
     namespace parse
     {
-        template<typename CharT>
-        std::vector<std::basic_string<CharT>>
-        split(const std::basic_string<CharT>& string_to_split, const std::basic_string<CharT>& delimiter)
-        {
-            std::vector<std::basic_string<CharT>> split_string;
-            if (string_to_split.empty()) return split_string;
-            std::size_t pos = string_to_split.find(delimiter);
-            std::size_t initial_pos = 0;
-
-            // Decompose statement
-            while (pos != std::basic_string<CharT>::npos)
-            {
-                split_string.push_back(string_to_split.substr(initial_pos, pos - initial_pos));
-                initial_pos = pos + delimiter.size();
-                pos = string_to_split.find(delimiter, initial_pos);
-            }
-
-            // Add the last one
-            split_string.push_back(
-                    string_to_split.substr(initial_pos, std::min(pos, string_to_split.size()) - initial_pos + 1));
-
-            return split_string;
-        }
-
         std::vector<std::string> tokenise_url(const std::string& url)
         {
-            std::vector<std::string> tokens = parse::split(url, std::string("/"));
+            std::vector<std::string> tokens = strings::split(url, std::string("/"));
             // Basically we check to see if there are any odd slashes, i.e.
             // double /'s, trailing or preceeding /'s then we just ignore them
             // as they make no difference
             tokens.erase(std::remove_if(
                     tokens.begin(),
                     tokens.end(),
-                    [](std::string token)
+                    [](std::string& token)
                     {
                         return token.empty();
                     }
             ), tokens.end());
             return tokens;
+        }
+
+        bool validate_parameter_token(const std::string& token)
+        {
+            if (strings::starts_with(token, std::string("<")) && strings::ends_with(token, std::string(">")))
+            {
+                auto trimmed_token = strings::trim_left(token, '<');
+                trimmed_token = strings::trim_right(trimmed_token, '<');
+                if (trimmed_token.find("<") != std::string::npos || trimmed_token.find(">") != std::string::npos)
+                {
+                    return false;
+                }
+                return true;
+            }
+            return false;
         }
     }
 
@@ -56,7 +50,7 @@ namespace hulk
 
         bool is_parameter() const
         {
-            return name[0] == '<';
+            return parse::validate_parameter_token(name);
         }
     };
 
@@ -67,6 +61,7 @@ namespace hulk
                 : m_route(route)
         {
             deconstruct();
+            validate();
         }
 
         std::string route() const
@@ -96,6 +91,11 @@ namespace hulk
 
             for (auto& token : tokens)
             {
+                // TODO: Validate the token is of the correct format, parameters must be <>
+//                if (!parse::validate_parameter_token(token))
+//                {
+//                    throw std::runtime_error("Invalid url parameter token")
+//                }
                 url_token new_token{token};
                 m_tokens.push_back(new_token);
                 std::stringstream log_ss;
@@ -103,6 +103,13 @@ namespace hulk
                 if (new_token.is_parameter()) log_ss << " (Parameter)";
                 log::debug(log_ss.str());
             }
+        }
+
+        void validate()
+        {
+            // TODO: Validate that the url input here is of the correct form
+            // if not we just throw an exception, which will prevent the server
+            // from starting up
         }
 
     private:
