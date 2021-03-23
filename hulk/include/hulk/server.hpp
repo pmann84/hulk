@@ -32,7 +32,14 @@ namespace hulk
             log::debug("Running context in separate thread.");
             m_context_run_thread = std::thread([this](){ m_context.run(); });
             log::info("Server started successfully!");
-            log::info("Server listening on http://127.0.0.1:{}", m_acceptor.local_endpoint().port());           
+            log::info("Server listening on http://127.0.0.1:{}", m_acceptor.local_endpoint().port());
+            std::stringstream registered_ep_ss;
+            registered_ep_ss << "Registered Endpoints: " << std::endl;
+            for (auto route : m_router.routes())
+            {
+                registered_ep_ss << route.route() << std::endl;
+            }
+            log::info(registered_ep_ss.str());
             while(!m_context.stopped()) 
             {
                 update();

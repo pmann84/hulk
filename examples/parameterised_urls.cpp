@@ -17,14 +17,18 @@ int main()
                 case hulk::HttpMethod::Get:
                 {
                     std::stringstream html_ss;
-                    html_ss << "<html><h1>Hello, World!</h1>" << "<p>Recieved parameters:";
-                    html_ss << "<ul>";
-                    // for (auto& param : url.params)
-                    // {
-                    //     html_ss << "<li>" << param << "</li>"
-                    // }
-                    html_ss << "</ul></p></html>";
-                    return hulk::http::response::ok("<html><h1>Hello, World!</h1></html>");
+                    html_ss << "<html><h1>Hello, World!</h1>";
+                    if (request.query_parameters.size() > 0)
+                    {
+                        html_ss << "<p>Received parameters: <ul>";
+                        for (auto& [key, val] : request.query_parameters.headers())
+                        {
+                            html_ss << "<li>" << key << " - " << val  << "</li>";
+                        }
+                        html_ss << "</ul></p>";
+                    }
+                    html_ss << "</html>";
+                    return hulk::http::response::ok(html_ss.str());
                 }
             }
             return hulk::http::response::not_found();

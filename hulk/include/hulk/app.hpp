@@ -34,6 +34,7 @@ namespace hulk
 
         void route(std::string url, route_handler_t handler)
         {
+            log::info("Registering route: {}", url);
             m_router.add(url, handler);
         }
 
