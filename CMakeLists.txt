@@ -7,6 +7,9 @@ project(
     LANGUAGES CXX
 )
 
+option(BUILD_TESTS "Build the tests" ON)
+option(BUILD_DOCS "Build the docs" ON)
+
 # Who doesnt like to know the compilation commands...
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
@@ -27,4 +30,12 @@ add_subdirectory(hulk)
 add_subdirectory(examples)
 
 # Tests
-add_subdirectory(test_hulk)
+if(BUILD_TESTS)
+    add_subdirectory(test_hulk)
+endif(BUILD_TESTS)
+
+# Docs
+if(BUILD_DOCS)
+    set(CMAKE_DOXYGEN_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/doc/doxygen)
+    add_subdirectory(doc)
+endif(BUILD_DOCS)

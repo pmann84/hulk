@@ -1,0 +1,9 @@
+DOXYFILE_ENCODING      = UTF-8
+PROJECT_NAME           = Hulk
+PROJECT_NUMBER         = @PROJECT_VERSION@
+PROJECT_BRIEF          = "Open Source C++ Micro Web Framework"
+OUTPUT_DIRECTORY       = @CMAKE_DOXYGEN_OUTPUT_PATH@
+OUTPUT_LANGUAGE        = English
+OUTPUT_DIRECTORY       = @CMAKE_CURRENT_BINARY_DIR@
+INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/../hulk/include/hulk @CMAKE_CURRENT_SOURCE_DIR@/../docs
+GENERATE_LATEX         = NO
