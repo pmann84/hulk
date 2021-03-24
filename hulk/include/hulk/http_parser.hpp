@@ -3,7 +3,6 @@
 
 #include "request.hpp"
 #include "constants.hpp"
-#include "helpers.hpp"
 
 namespace hulk
 {

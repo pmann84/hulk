@@ -4,7 +4,6 @@
 #include "constants.hpp"
 #include "parameter_map.hpp"
 #include "http_body.hpp"
-#include "helpers.hpp"
 
 #include <sstream>
 #include <string>

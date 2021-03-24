@@ -1,5 +1,5 @@
-#ifndef HULK_STRING_HELPERS_HPP
-#define HULK_STRING_HELPERS_HPP
+#ifndef HULK_STRING_HELPERS_HPP_
+#define HULK_STRING_HELPERS_HPP_
 
 #include <string>
 #include <vector>
