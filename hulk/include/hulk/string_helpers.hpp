@@ -1,6 +1,9 @@
 #ifndef HULK_STRING_HELPERS_HPP_
 #define HULK_STRING_HELPERS_HPP_
 
+/// @defgroup string_helpers hulk::strings
+/// @{
+
 #include <string>
 #include <vector>
 #include <locale>
@@ -11,9 +14,14 @@ namespace hulk
 {
     namespace strings
     {
+        /// @{
+        /// Function that splits a string around a given delimiter
+        /// \tparam CharT Template character type
+        /// \param string_to_split String to split
+        /// \param delimiter String delimiter used to split the string
+        /// \return Vector of string tokens representing the split string
         template<typename CharT>
-        std::vector<std::basic_string<CharT>>
-        split(const std::basic_string<CharT>& string_to_split, const std::basic_string<CharT>& delimiter)
+        std::vector<std::basic_string<CharT>> split(const std::basic_string<CharT>& string_to_split, const std::basic_string<CharT>& delimiter)
         {
             std::vector<std::basic_string<CharT>> split_string;
             if (string_to_split.empty()) return split_string;
@@ -35,9 +43,13 @@ namespace hulk
             return split_string;
         }
 
+        /// Join string tokens together using a given string delimiter.
+        /// \tparam CharT Template character type
+        /// \param split_string Tokens to join together
+        /// \param delimiter String delimiter used to join tokens
+        /// \return Joined string.
         template<typename CharT>
-        std::basic_string<CharT>
-        join(const std::vector<std::basic_string<CharT>>& split_string, const std::basic_string<CharT>& delimiter)
+        std::basic_string<CharT> join(const std::vector<std::basic_string<CharT>>& split_string, const std::basic_string<CharT>& delimiter)
         {
             if (split_string.empty()) return std::basic_string<CharT>();
             if (split_string.size() == 1) return split_string[0];
@@ -163,7 +175,10 @@ namespace hulk
             for (auto& c : lower_str) c = std::tolower(c);
             return lower_str;
         }
+        /// @}
     } // namespace strings
 } // namespace hulk
+
+/// @}
 
 #endif //HULK_STRING_HELPERS_HPP

@@ -2,9 +2,11 @@
 #define HULK_URLS_H_
 
 #include "string_helpers.hpp"
+#include "logging.hpp"
 
 #include<vector>
 #include<string>
+#include<sstream>
 #include<regex>
 
 namespace hulk
@@ -28,12 +30,17 @@ namespace hulk
             return tokens;
         }
 
+        std::string strip_parameter_token(const std::string& token)
+        {
+            auto trimmed_token = strings::trim_left(token, '<');
+            return strings::trim_right(trimmed_token, '>');
+        }
+
         bool validate_parameter_token(const std::string& token)
         {
             if (strings::starts_with(token, std::string("<")) && strings::ends_with(token, std::string(">")))
             {
-                auto trimmed_token = strings::trim_left(token, '<');
-                trimmed_token = strings::trim_right(trimmed_token, '<');
+                auto trimmed_token = strip_parameter_token(token);
                 if (trimmed_token.find("<") != std::string::npos || trimmed_token.find(">") != std::string::npos)
                 {
                     return false;
@@ -132,17 +139,20 @@ namespace hulk
         {
             const url_token rule_token = r.tokens()[i];
             const std::string target_token = target_tokens[i];
+            log::debug("Attempting to match route parameter {} to {}", rule_token.name, target_token);
             if (rule_token.is_parameter())
             {
                 // Need to parse the params
-                log::debug("Attempting to match route parameter {} to {}", rule_token.name, target_token);
+//                log::debug("Parameter detected...continue...");
             }
             else
             {
                 // Just check for equality here
                 if (rule_token.name != target_token) return false;
+//                log::debug("Token matched...continue...");
             }
         }
+        log::debug("Matched target url [{}] to route [{}]", target, r.route());
         return true;
     }
 

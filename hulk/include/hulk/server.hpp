@@ -1,3 +1,6 @@
+#ifndef HULK_SERVER_HPP_
+#define HULK_SERVER_HPP_
+
 #include "response.hpp"
 #include "connection_manager.hpp"
 #include "router.hpp"
@@ -80,3 +83,5 @@ namespace hulk
         router& m_router;
     };
 }
+
+#endif // HULK_SERVER_HPP_

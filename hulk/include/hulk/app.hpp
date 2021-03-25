@@ -11,6 +11,7 @@
 
 namespace hulk
 {
+    /// Main application class used to create a web app instance to which you can add endpoints.
     class app final
     {
     public:
