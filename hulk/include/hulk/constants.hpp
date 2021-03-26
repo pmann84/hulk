@@ -245,6 +245,21 @@ namespace hulk
     // application/msword
     // application/vnd.openxmlformats-officedocument.wordprocessingml.document
     // application/vnd.mozilla.xul+xml
+
+    enum class param_type
+    {
+        int_type,
+        float_type,
+        double_type,
+        string_type
+    };
+
+    std::map<std::string, param_type> ParamTypeMap = {
+            { "int", param_type::int_type },
+            { "float", param_type::float_type },
+            { "double", param_type::double_type },
+            { "string", param_type::string_type }
+    };
 }
 
 std::ostream& operator<<(std::ostream& os, hulk::HttpMethod method)

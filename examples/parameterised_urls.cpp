@@ -9,7 +9,7 @@ int main()
     app.debug().port(5000);
 
     // Set up routes
-    app.route("/api/thing/<int>", 
+    app.route("/api/thing/<int>",
         [](const hulk::http::request& request)
         {
             switch (request.method)

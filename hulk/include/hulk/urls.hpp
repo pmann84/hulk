@@ -36,16 +36,18 @@ namespace hulk
             return strings::trim_right(trimmed_token, '>');
         }
 
+        bool is_parameter_token(const std::string& token)
+        {
+            return strings::has_special_char(token);
+        }
+
         bool validate_parameter_token(const std::string& token)
         {
+            // Parameter should have the form <type>
             if (strings::starts_with(token, std::string("<")) && strings::ends_with(token, std::string(">")))
             {
                 auto trimmed_token = strip_parameter_token(token);
-                if (trimmed_token.find("<") != std::string::npos || trimmed_token.find(">") != std::string::npos)
-                {
-                    return false;
-                }
-                return true;
+                return ParamTypeMap.find(trimmed_token) != ParamTypeMap.end();
             }
             return false;
         }
@@ -57,7 +59,13 @@ namespace hulk
 
         bool is_parameter() const
         {
-            return parse::validate_parameter_token(name);
+            return parse::is_parameter_token(name);
+        }
+
+        param_type get_type() const
+        {
+            auto stripped_name = parse::strip_parameter_token(name);
+            return ParamTypeMap[stripped_name];
         }
     };
 
@@ -98,11 +106,6 @@ namespace hulk
 
             for (auto& token : tokens)
             {
-                // TODO: Validate the token is of the correct format, parameters must be <>
-//                if (!parse::validate_parameter_token(token))
-//                {
-//                    throw std::runtime_error("Invalid url parameter token")
-//                }
                 url_token new_token{token};
                 m_tokens.push_back(new_token);
                 std::stringstream log_ss;
@@ -114,9 +117,17 @@ namespace hulk
 
         void validate()
         {
-            // TODO: Validate that the url input here is of the correct form
-            // if not we just throw an exception, which will prevent the server
-            // from starting up
+            for (auto token : m_tokens)
+            {
+                if (token.is_parameter() && !parse::validate_parameter_token(token.name))
+                {
+                    std::stringstream err_ss;
+                    err_ss << "Attempt to register invalid url ";
+                    err_ss << m_route << ": Invalid parameter token " << token.name;
+                    log::error(err_ss.str());
+                    throw std::runtime_error(err_ss.str()); // TODO: Handle this not by throwing but exiting gracefully
+                }
+            }
         }
 
     private:

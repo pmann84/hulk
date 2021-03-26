@@ -175,6 +175,17 @@ namespace hulk
             for (auto& c : lower_str) c = std::tolower(c);
             return lower_str;
         }
+
+        bool has_special_char(const std::string& str)
+        {
+            return std::find_if(
+                    str.begin(),
+                    str.end(),
+                    [](const char& ch)
+                    {
+                        return !(isalnum(ch) || ch == '_');
+                    }) != str.end();
+        }
         /// @}
     } // namespace strings
 } // namespace hulk
