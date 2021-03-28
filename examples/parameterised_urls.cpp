@@ -6,7 +6,7 @@ int main()
 {    
     // Flesh out the API
     hulk::app app;
-    app.debug().port(5000);
+    app.port(5000);
 
     // Set up routes
     app.route("/api/thing/<int>",

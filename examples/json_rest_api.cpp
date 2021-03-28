@@ -17,7 +17,25 @@ int main()
 {    
     // Flesh out the API
     hulk::app app;
-    app.debug().port(5000);
+    app.port(5000);
+
+    app.route("/json",
+              [](const hulk::http::request& request)
+              {
+                  switch (request.method)
+                  {
+                      case hulk::HttpMethod::Get:
+                      {
+                          hulk::json response;
+                          response["message"] = "Hello, World!";
+                          return hulk::http::response::ok(response.dump(), "application/json");
+                      }
+                      default:
+                      {
+                          return hulk::http::response::not_found();
+                      }
+                  }
+              });
 
     app.route("/currenttime",
         [](const hulk::http::request& request)

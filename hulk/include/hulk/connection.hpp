@@ -76,13 +76,15 @@ namespace hulk
 
         void send(http::response response)
         {
+            auto response_status = response.status;
             std::shared_ptr<std::string> response_str = std::make_shared<std::string>(static_cast<std::string>(response));
             asio::async_write(m_socket, asio::buffer(response_str->c_str(), response_str->length()), 
-                [this, response_str](const std::error_code& ec, std::size_t bytes_sent)
+                [this, response_str, response_status](const std::error_code& ec, std::size_t bytes_sent)
                 {
                     if (!ec)
                     {
-                        log::info("Sending response:\nBytes Sent: {}\nResponse Bytes: {}\nResponse Data: {}", bytes_sent, response_str->length(), *response_str);
+                        log::info("Sending response {}", response_status);
+                        log::debug("Sending response:\nBytes Sent: {}\nResponse Bytes: {}\nResponse Data: {}", bytes_sent, response_str->length(), *response_str);
                         m_socket.shutdown(asio::ip::tcp::socket::shutdown_both);
                     }
                     else
@@ -109,9 +111,9 @@ namespace hulk
             log::debug("BYTES LEFT IN BUFFER: {}", m_message_buffer.size());
             if (m_parser.status() == parser::status::completed)
             {
-                log::info("Finished reading message:\n{}", static_cast<std::string>(m_request));
+                log::debug("Finished reading message:\n{}", static_cast<std::string>(m_request));
                 // ROUTING
-                log::info("Executing route {} handler...", m_request.target);
+                log::info("Executing route {} handler.", m_request.target);
                 // Execute request
                 execute_request();
             }
