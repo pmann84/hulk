@@ -10,9 +10,7 @@
 #include <codecvt>
 #include <functional>
 
-namespace hulk
-{
-    namespace strings
+namespace hulk::strings
     {
         /// @{
         /// Function that splits a string around a given delimiter
@@ -187,8 +185,7 @@ namespace hulk
                     }) != str.end();
         }
         /// @}
-    } // namespace strings
-} // namespace hulk
+    } // namespace hulk
 
 /// @}
 
