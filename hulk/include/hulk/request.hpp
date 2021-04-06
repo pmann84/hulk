@@ -10,11 +10,11 @@
 #include <vector>
 #include <locale>
 #include <codecvt>
+#include <variant>
 #include <functional>
 
-namespace hulk
-{
-    namespace http
+
+namespace hulk::http
     {
         struct request
         {
@@ -41,6 +41,5 @@ namespace hulk
             }
         };
     }
-}
 
 #endif // HULK_REQUEST_H_
