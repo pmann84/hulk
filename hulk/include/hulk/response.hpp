@@ -40,7 +40,7 @@ namespace hulk
                 std::tm tm;
                 gmtime_s(&tm, &t);
                 std::stringstream datetime_ss;
-                datetime_ss << std::put_time(&tm, "%a, %d %b %Y %T %Z");
+                datetime_ss << std::put_time(&tm, HTTP_DATETIME_FORMAT.c_str());
                 add_header("Date", datetime_ss.str());
             }
 
