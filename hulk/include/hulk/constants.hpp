@@ -6,6 +6,7 @@
 #include <map>
 #include <sstream>
 #include <ostream>
+#include <variant>
 
 #include <asio.hpp>
 
@@ -18,6 +19,7 @@ namespace hulk
 
     using http_headers = parameter_map;
     using query_parameters = parameter_map;
+    using url_parameters = std::map<std::string, std::variant<std::string, uint64_t, float, double>>;
 
     std::string socket_to_string(asio::ip::tcp::socket& socket)
     {
@@ -248,6 +250,7 @@ namespace hulk
 
     enum class param_type
     {
+        none_type,
         int_type,
         float_type,
         double_type,

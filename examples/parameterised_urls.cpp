@@ -6,10 +6,10 @@ int main()
 {    
     // Flesh out the API
     hulk::app app;
-    app.port(5000);
+    app.debug().port(5000);
 
     // Set up routes
-    app.route("/api/thing/<int>",
+    app.route("/api/thing/<int:id>",
         [](const hulk::http::request& request)
         {
             switch (request.method)

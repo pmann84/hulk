@@ -3,6 +3,7 @@
 
 #include <map>
 #include <string>
+#include <utility>
 
 namespace hulk
 {
@@ -21,9 +22,9 @@ namespace hulk
             return std::make_pair(false, "");
         }
 
-        void add(std::string key, std::string value)
+        void add(const std::string& key, std::string value)
         {
-            m_parameters[key] = value;
+            m_parameters[key] = std::move(value);
         }
 
         const std::map<std::string, std::string>& headers() const

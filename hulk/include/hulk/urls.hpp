@@ -36,6 +36,19 @@ namespace hulk
             return strings::trim_right(trimmed_token, '>');
         }
 
+        std::vector<std::string> split_parameter_token(const std::string& token)
+        {
+            std::string stripped_token = strip_parameter_token(token);
+            std::vector<std::string> param_split = strings::split(stripped_token, std::string(":"));
+            return param_split;
+        }
+
+        std::pair<std::string, std::string> parse_parameter_pair(const std::string& token_str)
+        {
+            std::vector<std::string> param_split = split_parameter_token(token_str);
+            return {param_split[0], param_split[1]};
+        }
+
         bool is_parameter_token(const std::string& token)
         {
             return strings::has_special_char(token);
@@ -43,11 +56,16 @@ namespace hulk
 
         bool validate_parameter_token(const std::string& token)
         {
-            // Parameter should have the form <type>
+            // Parameter should have the form <type:name>
             if (strings::starts_with(token, std::string("<")) && strings::ends_with(token, std::string(">")))
             {
-                auto trimmed_token = strip_parameter_token(token);
-                return ParamTypeMap.find(trimmed_token) != ParamTypeMap.end();
+                log::debug("{} is parameter type", token);
+                if (split_parameter_token(token).size() != 2)
+                {
+                    return false;
+                }
+                auto [param_type, param_name] = parse_parameter_pair(token);
+                return ParamTypeMap.find(param_type) != ParamTypeMap.end();
             }
             return false;
         }
@@ -62,10 +80,24 @@ namespace hulk
             return parse::is_parameter_token(name);
         }
 
+        std::string get_name() const
+        {
+            if (parse::validate_parameter_token(name))
+            {
+                auto[param_type, param_name] = parse::parse_parameter_pair(name);
+                return param_name;
+            }
+            return "";
+        }
+
         param_type get_type() const
         {
-            auto stripped_name = parse::strip_parameter_token(name);
-            return ParamTypeMap[stripped_name];
+            if (parse::validate_parameter_token(name))
+            {
+                auto[param_type, param_name] = parse::parse_parameter_pair(name);
+                return ParamTypeMap[param_type];
+            }
+            return param_type::none_type;
         }
     };
 
@@ -99,6 +131,11 @@ namespace hulk
             return out.str();
         }
 
+        void add_param(std::string key, std::string value)
+        {
+
+        }
+
     private:
         void deconstruct()
         {
@@ -119,6 +156,7 @@ namespace hulk
         {
             for (auto token : m_tokens)
             {
+                log::debug("Validating parameter {}", token.name);
                 if (token.is_parameter() && !parse::validate_parameter_token(token.name))
                 {
                     std::stringstream err_ss;
@@ -140,6 +178,26 @@ namespace hulk
         return r1.route() < r2.route();
     }
 
+    template <typename ConvertFuncT>
+    bool is_convertible(ConvertFuncT func)
+    {
+        try
+        {
+            func();
+            return true;
+        }
+        catch (std::exception& e)
+        {
+            // std::invalid_argument if no conversion could be performed
+            // std::out_of_range if the converted value would fall out of the range of the
+            // result type or if the underlying function (std::strtol or std::strtoll)
+            // sets errno to ERANGE.
+            log::debug("Target value isn't convertible to parameter type.");
+            return false;
+        }
+    }
+
+
     bool match(const std::string& target, const rule& r)
     {
         std::vector<std::string> target_tokens = parse::tokenise_url(target);
@@ -153,8 +211,28 @@ namespace hulk
             log::debug("Attempting to match route parameter {} to {}", rule_token.name, target_token);
             if (rule_token.is_parameter())
             {
-                // Need to parse the params
-//                log::debug("Parameter detected...continue...");
+                // Check that it can be converted to the specified type
+                switch (rule_token.get_type())
+                {
+                    case param_type::int_type:
+                    {
+                        return is_convertible([&target_token](){ std::stoi(target_token); });
+                    }
+                    case param_type::float_type:
+                    {
+                        return is_convertible([&target_token](){ std::stof(target_token); });
+                    }
+                    case param_type::double_type:
+                    {
+                        return is_convertible([&target_token](){ std::stod(target_token); });
+                    }
+                    case param_type::string_type:
+                    {
+                        return true;
+                    }
+                    default:
+                        return false;
+                }
             }
             else
             {
@@ -166,67 +244,6 @@ namespace hulk
         log::debug("Matched target url [{}] to route [{}]", target, r.route());
         return true;
     }
-
-
-
-    // struct url_details
-    // {
-        
-    // };
-
-    // struct url_token
-    // {
-    //     std::string name;
-    // };
-
-    // struct url_token_parameter
-    // {
-    //     std::string type;
-    // };
-
-    // class rule
-    // {
-    // public:
-    //     rule(std::string route) : m_route(route)
-    //     {
-    //         tokenise();
-    //     }
-
-    //     std::string route() const
-    //     {
-    //         return m_route;
-    //     }
-
-    // private:
-    //     void tokenise()
-    //     {
-    //         std::vector<std::string> string_tokens = parsing_utils::split(m_route, std::string("/"));
-    //         for (auto string_token : string_tokens)
-    //         {
-    //             // TODO: Handle multi slashes
-    //             if (&string_token[0] == "<")
-    //             {
-    //                 string_tokens.push_back(string_token);
-    //                 // Parameter token
-    //             }
-    //             else
-    //             {
-    //                 string_tokens.push_back(string_token);
-    //                 // regular token
-    //             }
-    //         }
-    //     }
-
-    // private:
-    //     std::string m_route;
-    //     std::string m_view_alias;
-    //     // std::vector<url_token> m_tokens;
-    // };
-
-    // bool operator<(const rule& r1, const rule& r2)
-    // {
-    //     return r1.route() < r2.route();
-    // }
 }
 
 #endif // HULK_URLS_H_
