@@ -46,26 +46,20 @@ cd out
 cmake ..
 cmake --build . --config Debug
 ```
-
-## Benchmarking
-Get setup with this benchmark that runs against a variety of different frameworks
-https://github.com/TechEmpower/FrameworkBenchmarks
-
 ## Current Development
 Currently this is a very miminally featured web framework, that has very little url parsing support. Currently it only supports the addition of basic non parameterised url tokens
-- Proper routing of urls - passing of route parameters into handlers
 - Allow duplicate query parameters 
 - Allow query parameters delimited by semicolon `;` as well as `&`
 - Tighten up validation of http requests when parsing them
-- Make logging more minimal
 
 ## Future Development
 Below is a list of issues that need addressing - these will eventually move to github issues tracking
 - Implement multithreading - basically implement a pool of contexts that can process requests in parallel - can only process requests from different servers in parallel
-- Database layer - simple querying, not necessarily
+- Database layer - simple querying
 - Middleware Response caching
+- Make passing of url parameters work at compile time so parameters come through the function itself 
 - Investigate usage of classes for routes
 - Implement url namespaces i.e. providing a prefix to a set of api end points e.g. api/hello and api/world so you dont have to specify the prefix "api"
 - Support for websockets 
 - More Unit test coverage
-- Benchmarking
+- Benchmarking - https://github.com/TechEmpower/FrameworkBenchmarks
