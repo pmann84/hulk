@@ -19,6 +19,7 @@ namespace hulk
 
     using http_headers = parameter_map;
     using query_parameters = parameter_map;
+    using url_parameter = std::variant<std::string, uint64_t, float, double>;
     using url_parameters = std::map<std::string, std::variant<std::string, uint64_t, float, double>>;
 
     std::string socket_to_string(asio::ip::tcp::socket& socket)

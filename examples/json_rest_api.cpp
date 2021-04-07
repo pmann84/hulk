@@ -20,7 +20,7 @@ int main()
     app.port(5000);
 
     app.route("/json",
-              [](const hulk::http::request& request)
+              [](const hulk::http::request& request, const hulk::url_parameters&)
               {
                   switch (request.method)
                   {
@@ -38,7 +38,7 @@ int main()
               });
 
     app.route("/currenttime",
-        [](const hulk::http::request& request)
+        [](const hulk::http::request& request, const hulk::url_parameters&)
         {
             switch (request.method)
             {

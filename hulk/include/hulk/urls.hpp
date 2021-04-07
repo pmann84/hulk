@@ -131,11 +131,6 @@ namespace hulk
             return out.str();
         }
 
-        void add_param(std::string key, std::string value)
-        {
-
-        }
-
     private:
         void deconstruct()
         {
@@ -238,11 +233,56 @@ namespace hulk
             {
                 // Just check for equality here
                 if (rule_token.name != target_token) return false;
-//                log::debug("Token matched...continue...");
             }
         }
         log::debug("Matched target url [{}] to route [{}]", target, r.route());
         return true;
+    }
+
+    url_parameters parse_url_params(const std::string& target, const rule& r)
+    {
+        url_parameters params;
+        std::vector<std::string> target_tokens = parse::tokenise_url(target);
+        for (size_t i = 0; i < r.tokens().size(); ++i)
+        {
+            const url_token rule_token = r.tokens()[i];
+            const std::string target_token = target_tokens[i];
+            log::debug("Attempting to parse parameter {} to {}", rule_token.name, target_token);
+            if (rule_token.is_parameter())
+            {
+                url_parameter param_value;
+                switch (rule_token.get_type())
+                {
+                    case param_type::int_type:
+                    {
+                        log::debug("Parsing int parameter...");
+                        param_value = static_cast<uint64_t>(std::stoi(target_token));
+                        break;
+                    }
+                    case param_type::float_type:
+                    {
+                        log::debug("Parsing float parameter...");
+                        param_value = std::stof(target_token);
+                        break;
+                    }
+                    case param_type::double_type:
+                    {
+                        log::debug("Parsing double parameter...");
+                        param_value = std::stod(target_token);
+                        break;
+                    }
+                    case param_type::string_type:
+                    {
+                        log::debug("Parsing string parameter...");
+                        param_value = target_token;
+                        break;
+                    }
+                }
+                auto param_name = rule_token.get_name();
+                params[param_name] = param_value;
+            }
+        }
+        return params;
     }
 }
 

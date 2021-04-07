@@ -56,10 +56,15 @@ namespace hulk
         {
             // TODO: THIS!
             // We need to be able to parse the route received against the parameterised versions
-            auto route_handler = m_router.try_get(m_request.target);
+            auto [route_handler, url_params] = m_router.try_get(m_request.target);
             // Populate the url info                
             // Execute the handler passing in the request and url params
-            auto response = route_handler(m_request);
+            // TODO: TEMP
+//            for (auto param : url_params)
+//            {
+//                log::debug("Parsed url parameter: {} - {}", param.first, std::get<uint64_t>(param.second));
+//            }
+            auto response = route_handler(m_request, url_params);
             send(response);
         }
 

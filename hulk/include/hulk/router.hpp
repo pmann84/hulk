@@ -13,10 +13,9 @@ namespace hulk
     {
         struct request;
     }
-    struct url_details;
 
-    using route_handler_t = std::function<http::response(const http::request&)>;
-    route_handler_t empty_route_handler = [](const http::request&){ return http::response::not_found(); };
+    using route_handler_t = std::function<http::response(const http::request&, const url_parameters&)>;
+    route_handler_t empty_route_handler = [](const http::request&, const url_parameters&){ return http::response::not_found(); };
 
     class router
     {
@@ -37,12 +36,11 @@ namespace hulk
                 if (match(url, route_rule))
                 {
                     log::debug("Found matching route {} for target {}", static_cast<std::string>(route_rule), url);
-                    // TODO: Parse the route parameters here
-                    //...
-                    return std::make_pair(route_handler, );
+                    auto params = parse_url_params(url, route_rule);
+                    return std::make_pair(route_handler, params);
                 }
             }
-            return std::make_pair(empty_route_handler, );
+            return std::make_pair(empty_route_handler, url_parameters());
         }
 
         std::vector<rule> routes()

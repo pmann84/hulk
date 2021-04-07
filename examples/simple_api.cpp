@@ -8,7 +8,7 @@ int main()
 
     // Set up routes
     app.route("/api",
-        [](const hulk::http::request& request)
+        [](const hulk::http::request& request, const hulk::url_parameters&)
         {
             switch (request.method)
             {
