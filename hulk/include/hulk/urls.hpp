@@ -1,6 +1,7 @@
 #ifndef HULK_URLS_H_
 #define HULK_URLS_H_
 
+#include "constants.hpp"
 #include "string_helpers.hpp"
 #include "logging.hpp"
 

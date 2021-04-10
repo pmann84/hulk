@@ -4,7 +4,7 @@ int main()
 {    
     // Flesh out the API
     hulk::app app;
-    app.debug().port(5000);
+    app.port(5000);
 
     // Set up routes
     app.route("/api",
@@ -14,7 +14,9 @@ int main()
             {
                 case hulk::HttpMethod::Get:
                 {
-                    return hulk::http::response::ok((std::string)"<html><h1>Hello, World!</h1></html>");
+                    hulk::html_element doc;
+                    doc.add("h1", "Hello, World!");
+                    return hulk::http::response::ok(doc.to_string());
                 }
             }
             return hulk::http::response::not_found();

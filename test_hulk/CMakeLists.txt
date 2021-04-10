@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 project(test_hulk)
-set(SOURCES basic_tests.cpp http_parser_tests.cpp urls_tests.cpp)
+set(SOURCES basic_tests.cpp http_parser_tests.cpp urls_tests.cpp html_builder_tests.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 

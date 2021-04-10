@@ -7,5 +7,6 @@
 #include "hulk/response.hpp"
 #include "hulk/json.hpp"
 #include "hulk/urls.hpp"
+#include "hulk/html_builder.hpp"
 
 #endif // HULK_H_

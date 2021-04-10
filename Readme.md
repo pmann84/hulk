@@ -27,7 +27,7 @@ int main()
 
     // Register endpoint
     app.route("/api", 
-        [](const hulk::http::request&)
+        [](const hulk::http::request&, const hulk::url_params&)
         {
             // Do some stuff here... //
             return hulk::http::response::ok("<html><h1>Hello, World!</h1></html>");
